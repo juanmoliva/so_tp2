@@ -1,0 +1,15 @@
+-Interpretar Teclas (que codigo es cada letra)
+-Interpretar que palabra se ha ingresado -> Lista de comandos
+-Agregar en todos los ncPrint un for para desplazar la pantalla para arriba
+-Hacer los comandos que deben estar disponibles en el interprete
+-Hacer las dos excepciones que piden y manejarlas (Tipo de error, estado de IP y registros)
+
+Agregar syscalls para:
+-printf
+-putChar
+-scanf
+-getChar
+
+Comandos:
+-Hora
+-Snake
