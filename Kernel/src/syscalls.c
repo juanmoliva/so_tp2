@@ -70,6 +70,11 @@ void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb) {
     // ncNewline();
 }
 
-void memory_handler(uint64_t bytes){
-    return allocate_bytes(bytes);
+uint64_t memory_handler(uint64_t flag,uint64_t num){
+    if(flag) {
+        return free_block(num);
+    }
+    else {
+        return allocate_block(num);
+    }
 }

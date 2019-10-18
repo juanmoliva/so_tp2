@@ -73,6 +73,7 @@ uint64_t syscall_08 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 }
 
 uint64_t syscall_09 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-	// devuelve direccion de memoria con "rdi" bytes libres.
-	return memory_handler(rdi);
+	/* si 'rdi' es cero: va a asignar 'rsi' bytes en memoria y devolver la direccion en la que los asignó.
+	   si no: va a liberar los bloques alocados en la direccion 'rsi' y devolver 0 si pudo hacerlo. */
+	return memory_handler(rdi, rsi);
 }
