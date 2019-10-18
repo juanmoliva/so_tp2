@@ -16,11 +16,12 @@ static uint64_t syscall_06 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_07 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_08 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_09 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_10 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 extern void hang(); // Ubicada en loader.asm
 
 uint64_t (* syscalls[]) (uint64_t rdi, uint64_t rsi, uint64_t rdx) = {syscall_00, syscall_01, syscall_02, syscall_03, 
-																	syscall_04, syscall_05, syscall_06, syscall_07, syscall_08, syscall_09};
+																	syscall_04, syscall_05, syscall_06, syscall_07, syscall_08, syscall_09, syscall_10};
 
 // Dispatcher for software interrupts
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -75,5 +76,13 @@ uint64_t syscall_08 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 uint64_t syscall_09 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* si 'rdi' es cero: va a asignar 'rsi' bytes en memoria y devolver la direccion en la que los asignó.
 	   si no: va a liberar los bloques alocados en la direccion 'rsi' y devolver 0 si pudo hacerlo. */
-	return memory_handler(rdi, rsi);
+	return memory_handler( (char) rdi, rsi);
+}
+
+uint64_t syscall_10 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* dependiendo del valor de rdi, devuelve:
+		rdi == 0 --> memoria total
+		rdi != 0 --> memoria disponible
+	*/
+	return memory_state_handler( (char) rdi);
 }
