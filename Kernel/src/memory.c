@@ -28,3 +28,16 @@ uint64_t free_block(uint64_t address) {
 
     return 1;
 }
+
+uint64_t cur_free_mem() {
+    // devuelve la cantidad de memoria libre que hay.
+    
+    // HARCODEADO
+    return end_memsegment - start_memsegment;
+}
+
+uint64_t total_mem(uint64_t address) {
+    // devuelve la cantidad de memoria total que se administra.
+
+    return end_memsegment - start_memsegment;
+}
