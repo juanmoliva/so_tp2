@@ -6,6 +6,7 @@
 #include <console.h>
 #include <naiveConsole.h>
 #include <sound.h>
+#include <memory.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count) {
     // File descriptor doesn't matter
@@ -67,4 +68,8 @@ void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb) {
     // ncNewline();
     // ncPrintDec(auxColor.b);
     // ncNewline();
+}
+
+void memory_handler(uint64_t bytes){
+    return allocate_bytes(bytes);
 }
