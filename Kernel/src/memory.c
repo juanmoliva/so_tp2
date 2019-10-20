@@ -2,8 +2,13 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <memory.h>
 
-static uint64_t start_memsegment = 0x1000000;
-static uint64_t end_memsegment = 0x2000000;
+static void * start_memsegment = (void*)0x1000000;
+static void * end_memsegment = (void*)0x1100000;
+
+/*
+    2^20 bytes de memoria.
+    bloques o paginas de 64 bytes.
+*/
 
 /* tenemos una cierta cantidad de memoria libre para administrar en bytes:
     - separamos la memoria en bloques
@@ -14,11 +19,14 @@ static uint64_t end_memsegment = 0x2000000;
 
 
 uint64_t allocate_block(uint64_t bytes) {
+    unsigned long needed_blocks = bytes / 64 + 1; 
+
+
     // devolvemos el comienzo de la zona de memoria libre.
-    unsigned long addr = start_freemem;
+    unsigned long addr = start_memsegment;
     
     // aumentamos el puntero al comienzo de zona libre.
-    start_freemem += bytes*8;
+    start_memsegment += bytes;
     return addr;
 }
 
