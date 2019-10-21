@@ -12,6 +12,8 @@
 #define BEEP_ID     6
 #define EXIT_ID     7
 #define PIXEL_ID    8
+#define MEMORY_ALLOC_ID 9
+#define MEMORY_STATE_ID 10
 
 #define STDIN       0
 #define STDOUT      1
