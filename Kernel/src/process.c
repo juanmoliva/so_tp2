@@ -8,8 +8,15 @@ static int top_id = 0;
 
 
 void init_scheduler() {
-
+    // crear struct??
 }
+
+void context_switch() {
+    // llamar scheduler / obtener siguiente proceso.
+    // buscar direccion del stack del nuevo proceso.
+    // cambiar contexto
+}
+
 
 uint64_t create_process() {
     uint64_t new_stack = malloc( STACK_SIZE );
