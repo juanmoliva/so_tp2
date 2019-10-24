@@ -59,9 +59,11 @@ void * initializeKernelBinary()
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
+	init_mm();
 	initVideoDriver();
   	init_console();
 	
+
 	load_idt();
 
 	return getStackBase();

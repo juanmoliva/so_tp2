@@ -1,6 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <memory.h>
+#include <string.h>
+#include <stdint.h>
 #define BLOCKSIZE 0x40
 
 static void * start_memsegment = (void*)0x1000000;
@@ -58,7 +60,7 @@ uint64_t allocate_blocks(uint64_t bytes) {
 
     //Nos fuimos alfinal y no hay lugar
     if (current == NULL ) {
-        return NULL;
+        return -1;
     }
     // creamos un puntero al a la direccion correspondiente + tam requerido y metemos un nuevo nodo 
     else {
@@ -75,7 +77,7 @@ uint64_t allocate_blocks(uint64_t bytes) {
         current->next = aux->startAddr;
 
 
-        return current->startAddr += sizeof(node_t);
+        return (uint64_t)(current->startAddr + sizeof(node_t));
     }
 }
 
@@ -87,7 +89,7 @@ uint64_t free_block(uint64_t address) {
 
     //Recorro todo hasta encontrar el lugar que me pasaron
     while ( current != NULL ) {
-        if ( (current->startAddr + sizeof(node_t)) == address )
+        if ( (uint64_t)(current->startAddr + sizeof(node_t)) == address )
         {
             break;
         }
@@ -125,7 +127,6 @@ uint64_t cur_free_mem() {
         current=current->next;
     }
     
-
     return freeBlocks * BLOCKSIZE;
 }
 
