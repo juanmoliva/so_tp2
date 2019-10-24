@@ -33,6 +33,8 @@ void initShell() {
 void initScreen() {
     clearScreen();
     puts("Bienvenido al programa. El comando help lo ayudara\n");
+    puts("Bienvenido\n");
+    printMemState();
 }
 
 int getCommand(char * input){

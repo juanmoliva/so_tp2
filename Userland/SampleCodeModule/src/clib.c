@@ -154,3 +154,20 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     uint64_t rgb = getRGB(r, g, b);
     syscall(PIXEL_ID, x, y, rgb);
 }
+
+uint64_t malloc(unsigned long bytes) {
+    return syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
+}
+
+int free(uint64_t addr) {
+    return syscall(MEMORY_ALLOC_ID, 1, addr, 0);
+}
+
+void printMemState() {
+    puts("Memoria total administrada: ");
+    printf("%d", syscall(MEMORY_STATE_ID,0,0,0));
+    puts("\n");
+    puts("Memoria libre disponible: ");
+    printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
+    puts("\n");
+}

@@ -28,6 +28,9 @@ void beep(uint32_t frequency, uint64_t millis);
 void exit();
 uint64_t getTicks();
 void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
+void printMemState();
+int free(uint64_t addr);
+uint64_t malloc(unsigned long bytes);
 
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 

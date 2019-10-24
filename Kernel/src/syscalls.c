@@ -7,6 +7,7 @@
 #include <naiveConsole.h>
 #include <sound.h>
 #include <memory.h>
+#include <process.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count) {
     // File descriptor doesn't matter
@@ -75,15 +76,19 @@ uint64_t memory_handler(uint8_t flag,uint64_t num){
         return free_block(num);
     }
     else {
-        return allocate_block(num);
+        return allocate_blocks(num);
     }
 }
 
 uint64_t memory_state_handler(uint8_t free){
     if (free) {
-        return curr_free_mem();
+        return cur_free_mem();
     }
     else {
         return total_mem();
     }
+}
+
+uint64_t create_process_handler() {
+    return create_process();
 }
