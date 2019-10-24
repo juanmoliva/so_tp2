@@ -3,6 +3,7 @@
 #include <time.h>
 #include <keyboard.h>
 #include <stdint.h>
+#include <process.h>
 
 // Hardware handlers functions
 static void int_20();
@@ -17,6 +18,7 @@ void irqDispatcher(uint64_t irq) {
 
 void int_20() {
 	timer_handler();
+	context_switch();
 }
 
 void int_21() {
