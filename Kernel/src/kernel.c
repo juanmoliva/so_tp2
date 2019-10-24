@@ -9,6 +9,8 @@
 #include <defs.h>
 #include <videoDriver.h>
 #include <console.h>
+
+#include <process.h>
 //#include <time.h>
 
 extern uint8_t text;
@@ -59,7 +61,12 @@ void * initializeKernelBinary()
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
+	//Inicializamos el Memory Manager
 	init_mm();
+	//Inicializamos toda la parte de procesos
+	init_process_list();
+	init_scheduler();
+	////////////////////////////////////////
 	initVideoDriver();
   	init_console();
 	
