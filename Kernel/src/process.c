@@ -11,7 +11,7 @@
 //Creo la struct
 typedef struct process {
     unsigned long pid;
-    unsigned char status; // READY, BLOCKED OR RUNNING
+    unsigned char status; // READY/AVAILABLE ('a') , BLOCKED ('b') OR RUNNING ('r')
     unsigned char ppriority;
     uint64_t ip; // instruction pointer
     uint64_t sp; // stack pointer
@@ -55,15 +55,15 @@ void context_switch() {
 
 }
 
-uint64_t create_process() {
+uint64_t create_process(int priority) {
     // Crear estructura del proceso e Inicializar todo
     process_t * temp = malloc( sizeof(process_t) );
-    temp->pid = ;
-    temp->ppriority = ;
+    //temp->pid Se hace mas adelante
+    temp->ppriority = priority; //Hay que ver este tema ----------------------------------------------
     temp->sp = ;
     temp->ip = ;
-    temp->status = ;
-    temp->next = ; 
+    temp->status = 'a';
+    temp->next = NULL; 
     // Malloc espacio para el stack
     uint64_t new_stack = malloc( STACK_SIZE );
     // Lo agrego a la lista de procesos
@@ -77,7 +77,9 @@ uint64_t create_process() {
             current->next;
         }
 
+        temp->pid = (current->pid) + 1;
         current->next = temp;
+        
     // Le aviso al scheduler que tiene un proceso mas para ejecutar
 
     //El unico momento donde tocan ASM es en cuanto al timertick. ( Lo puso el cordoba en el campus ).

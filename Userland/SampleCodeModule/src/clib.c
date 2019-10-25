@@ -14,6 +14,7 @@
 #define PIXEL_ID    8
 #define MEMORY_ALLOC_ID 9
 #define MEMORY_STATE_ID 10
+#define CREATE_PROCESS 11
 
 #define STDIN       0
 #define STDOUT      1
@@ -170,4 +171,8 @@ void printMemState() {
     puts("Memoria libre disponible: ");
     printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
     puts("\n");
+}
+
+uint64_t fork(int priority) {
+    return syscall(CREATE_PROCESS, 0 ,priority, 0);
 }

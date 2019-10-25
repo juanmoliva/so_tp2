@@ -89,6 +89,6 @@ uint64_t memory_state_handler(uint8_t free){
     }
 }
 
-uint64_t create_process_handler() {
-    return create_process();
+uint64_t create_process_handler(int priority) {
+    return create_process(priority);
 }
