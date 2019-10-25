@@ -76,10 +76,5 @@ uint64_t create_process() {
     // ( no implementada )
     set_stack(new_stack);
     // -----------------------------------------------------------------------------
-    
 
-    top_id++;
-    int new_pid = top_id;
-
-    return new_pid;
 }
