@@ -64,8 +64,13 @@ uint64_t create_process(int priority) {
     temp->ip = ;
     temp->status = 'a';
     temp->next = NULL; 
+
     // Malloc espacio para el stack
-    uint64_t new_stack = malloc( STACK_SIZE );
+    void * process_stack = malloc( STACK_SIZE );
+    //Seteo el STACK
+
+    
+
     // Lo agrego a la lista de procesos
 
         //Creo un iterador de la lista
@@ -81,6 +86,8 @@ uint64_t create_process(int priority) {
         current->next = temp;
         
     // Le aviso al scheduler que tiene un proceso mas para ejecutar
+
+    
 
     //El unico momento donde tocan ASM es en cuanto al timertick. ( Lo puso el cordoba en el campus ).
     // llamar al scheduler con tu SP atcual 

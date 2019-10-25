@@ -2,6 +2,7 @@
     "files.associations": {
         "stdint.h": "c",
         "sound.h": "c",
-        "lib.h": "c"
+        "lib.h": "c",
+        "string.h": "c"
     }
 }
