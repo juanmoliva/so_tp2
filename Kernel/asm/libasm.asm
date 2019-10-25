@@ -1,6 +1,7 @@
 GLOBAL cpu_vendor
 GLOBAL write_port
 GLOBAL read_port
+GLOBAL set_stack
 
 
 section .text
@@ -42,3 +43,10 @@ cpu_vendor:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+; set_stack(unsigned long addr)
+set_stack:
+
+
+; context_asm(unsigned long old_stack, unsigned long new_stack)
+context_asm:

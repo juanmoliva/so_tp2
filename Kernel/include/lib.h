@@ -10,5 +10,6 @@ char * cpu_vendor(char *result);
 
 char read_port(char port);
 void write_port(char port, char reg);
-
+void set_stack(unsigned long addr);
+void context_asm(unsigned long old_stack, unsigned long new_stack);
 #endif
