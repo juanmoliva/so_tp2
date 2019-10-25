@@ -12,18 +12,18 @@
 typedef struct process {
     unsigned long pid;
     unsigned char status; // READY, BLOCKED OR RUNNING
-    unsigned char ptiority;
+    unsigned char ppriority;
     uint64_t ip; // instruction pointer
     uint64_t sp; // stack pointer
 
     struct process * next;
 } process_t;
 
-//Creo el HEAD de la lista
-process_t * process_list_first, *process_list_current;
+//Creo el HEAD de la lista y el current (para iterarla)
+process_t * process_list_first, * process_list_current;
 
 void init_scheduler() {
-    //Inicializo el puntero al primer proceso
+    //Inicializo el puntero al espacio donde va a ir el primer proceso
     process_list_first = malloc( sizeof(process_t) );
     process_list_current = process_list_first;
     // llenar info de primer proceso
@@ -56,21 +56,34 @@ void context_switch() {
 }
 
 uint64_t create_process() {
-    //Creo un iterador de la lista
-    process_t * current = process_list_first;
-
-    //Ciclo mientras que tenga otro elemento
-    while(current->next != NULL){
-        //Consumo hasta llegar al final
-        current->next;
-    }
-
-    current->next = malloc( sizeof(process_t) ); 
-    
-    // llenar el nodo nuevo con info.
-    // -----------------------------------------------------------------------------
-
+    // Crear estructura del proceso e Inicializar todo
+    process_t * temp = malloc( sizeof(process_t) );
+    temp->pid = ;
+    temp->ppriority = ;
+    temp->sp = ;
+    temp->ip = ;
+    temp->status = ;
+    temp->next = ; 
+    // Malloc espacio para el stack
     uint64_t new_stack = malloc( STACK_SIZE );
+    // Lo agrego a la lista de procesos
+
+        //Creo un iterador de la lista
+        process_t * current = process_list_first;
+
+        //Ciclo mientras que tenga otro elemento
+        while(current->next != NULL){
+            //Consumo hasta llegar al final
+            current->next;
+        }
+
+        current->next = temp;
+    // Le aviso al scheduler que tiene un proceso mas para ejecutar
+
+    //El unico momento donde tocan ASM es en cuanto al timertick. ( Lo puso el cordoba en el campus ).
+    // llamar al scheduler con tu SP atcual 
+
+
     
     // funcion de assembler que llena el stack con lo que tiene que tener 
     // ( no implementada )
