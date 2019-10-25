@@ -19,7 +19,12 @@ typedef struct process {
     struct process * next;
 } process_t;
 
+static unsigned char priority_flag = 0;
+
 //Creo el HEAD de la lista y el current (para iterarla)
+
+// current es el proceso que está en ejecución ahora
+
 process_t * process_list_first, * process_list_current;
 
 void init_scheduler() {
@@ -31,6 +36,12 @@ void init_scheduler() {
 }
 
 void context_switch() {
+    // si la flag de priority está en 1, no hay que cambiar contexto aun.
+    if( priority_flag ){
+        priority_flag = 0;
+        return;
+    }
+
     // llamar scheduler / obtener siguiente proceso.
     // buscar direccion del stack del nuevo proceso.
     // cambiar contexto
@@ -38,8 +49,6 @@ void context_switch() {
     process_t *process_list_previous = process_list_current;
 
     // pongo en current el siguiente proceso
-    // esto deberia ser basado en prioridad
-    // ------------------------------------------------------------------------------
     if ( process_list_current->next != NULL)
         process_list_current = process_list_current->next;
     else
@@ -47,6 +56,12 @@ void context_switch() {
         process_list_current = process_list_first;
     }
     
+    // si la prioridad del nuevo proceso es 0 (top priority), seteamos la priority flag para la proxima llamada a esta funcion.
+    if (process_list_current->ppriority == 0) {
+        // top priority
+        priority_flag = 1;
+    }
+
     // cambiar contextos con funcion en assembler.
     // ( no implementada )
     context_asm(process_list_previous->sp, process_list_current->sp);
@@ -96,7 +111,7 @@ uint64_t create_process(int priority) {
     
     // funcion de assembler que llena el stack con lo que tiene que tener 
     // ( no implementada )
-    set_stack(new_stack);
+    set_stack(process_stack);
     // -----------------------------------------------------------------------------
 
 }
