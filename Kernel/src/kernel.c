@@ -10,6 +10,7 @@
 #include <videoDriver.h>
 #include <console.h>
 
+#include <memory.h>
 #include <process.h>
 //#include <time.h>
 

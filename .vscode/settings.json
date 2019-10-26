@@ -3,6 +3,8 @@
         "stdint.h": "c",
         "sound.h": "c",
         "lib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "memory.h": "c",
+        "console.h": "c"
     }
 }

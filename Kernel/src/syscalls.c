@@ -8,6 +8,7 @@
 #include <sound.h>
 #include <memory.h>
 #include <process.h>
+#include <videoDriver.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count) {
     // File descriptor doesn't matter

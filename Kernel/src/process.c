@@ -64,7 +64,7 @@ void context_switch() {
 
     // cambiar contextos con funcion en assembler.
     // ( no implementada )
-    context_asm(process_list_previous->sp, process_list_current->sp);
+    // context_asm(process_list_previous->sp, process_list_current->sp);
     // -----------------------------------------------------------------------------
 
 
@@ -75,8 +75,8 @@ uint64_t create_process(int priority) {
     process_t * temp = malloc( sizeof(process_t) );
     //temp->pid Se hace mas adelante
     temp->ppriority = priority; //Hay que ver este tema ----------------------------------------------
-    temp->sp = ;
-    temp->ip = ;
+    temp->sp = 0;
+    temp->ip = 0;
     temp->status = 'a';
     temp->next = NULL; 
 

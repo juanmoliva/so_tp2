@@ -8,6 +8,7 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 
 char * cpu_vendor(char *result);
 
+uint64_t malloc( unsigned long bytes );
 char read_port(char port);
 void write_port(char port, char reg);
 void set_stack(unsigned long addr);
