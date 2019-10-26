@@ -64,7 +64,7 @@ void * initializeKernelBinary()
 	//Inicializamos el Memory Manager
 	init_mm();
 	//Inicializamos toda la parte de procesos
-	init_process_list();
+	//init_process_list(); Ta todo en el init scheduler alfinal
 	init_scheduler();
 	////////////////////////////////////////
 	initVideoDriver();

@@ -115,3 +115,16 @@ uint64_t create_process(int priority) {
     // -----------------------------------------------------------------------------
 
 }
+
+//Recorro la lista de procesos hasta encontrar el indicado y modifico su prioridad
+uint64_t update_process_priority(int pid, int priority) {
+    process_list_current = process_list_first;
+    while(process_list_current != NULL){
+        process_list_current = process_list_current->next;
+    }
+}
+
+//Recorro la lista de procesos hasta encontrar el indicado y modifico su state
+uint64_t update_process_state(int pid, char state) {
+
+}

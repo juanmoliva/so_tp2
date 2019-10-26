@@ -12,9 +12,12 @@
 #define BEEP_ID     6
 #define EXIT_ID     7
 #define PIXEL_ID    8
+//////////////////////////////////////////////
 #define MEMORY_ALLOC_ID 9
 #define MEMORY_STATE_ID 10
 #define CREATE_PROCESS 11
+#define UPDATE_PROCESS_PRIORITY 12
+#define UPDATE_PROCESS_STATE 13
 
 #define STDIN       0
 #define STDOUT      1
@@ -175,4 +178,12 @@ void printMemState() {
 
 uint64_t fork(int priority) {
     return syscall(CREATE_PROCESS, 0 ,priority, 0);
+}
+
+uint64_t set_process_priority(int pid, int priority) {
+    return syscall(UPDATE_PROCESS_PRIORITY, pid ,priority, 0);
+}
+
+uint64_t set_process_state(int pid, char state) {
+    return syscall(UPDATE_PROCESS_STATE, pid ,state, 0);
 }

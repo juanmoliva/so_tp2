@@ -20,11 +20,15 @@ static uint64_t syscall_09 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_10 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_11 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_12 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_13 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_14 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 extern void hang(); // Ubicada en loader.asm
 
 uint64_t (* syscalls[]) (uint64_t rdi, uint64_t rsi, uint64_t rdx) = {syscall_00, syscall_01, syscall_02, syscall_03, 
-																	syscall_04, syscall_05, syscall_06, syscall_07, syscall_08, syscall_09, syscall_10, syscall_11, syscall_12};
+																	syscall_04, syscall_05, syscall_06, syscall_07, 
+																	syscall_08, syscall_09, syscall_10, syscall_11, 
+																	syscall_12, syscall_13, syscall_14};
 
 // Dispatcher for software interrupts
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -94,5 +98,21 @@ uint64_t syscall_11 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* creates a new process, returns the new process id.
 	*/
 	//rsi ----> tiene la priority
+	//rdi --> pid
 	return create_process_handler((int) rsi);
 }
+uint64_t syscall_12 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* UPDATE PROCESS PRIORITY
+	*/
+	//rsi ----> tiene la priority
+	//rdi --> pid
+	return update_process_priority_handler((int) rdi, (int) rsi);
+}
+uint64_t syscall_13 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* UPDATE PROCESS STATE
+	*/
+	//rsi ----> tiene el nuevo state
+	//rdi --> pid
+	return update_process_state_handler((int) rdi, (char) rsi);
+}
+
