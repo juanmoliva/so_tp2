@@ -115,4 +115,10 @@ uint64_t syscall_13 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	//rdi --> pid
 	return update_process_state_handler((int) rdi, (char) rsi);
 }
+uint64_t syscall_14 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* LIST PROCESSES 
+	*/
+
+	return list_processes_handler();
+}
 

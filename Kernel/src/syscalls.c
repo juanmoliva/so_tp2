@@ -100,3 +100,7 @@ uint64_t update_process_priority_handler(int pid, int priority) {
 uint64_t update_process_state_handler(int pid, char state) {
     return update_process_state(pid ,state);
 }
+
+uint64_t list_processes_handler() {
+    return list_processes();
+}

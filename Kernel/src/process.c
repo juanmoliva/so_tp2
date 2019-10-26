@@ -151,4 +151,13 @@ void process_finder(int pid, process_t * temp) {
     return;
 }
 
+uint64_t list_processes() {
+    process_t * temp = process_list_first;
+    while(temp != NULL){
+        //printf !!!! Aca printeo cada uno
+        temp = temp->next;
+    }
+
+}
+
 
