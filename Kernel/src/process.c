@@ -118,13 +118,37 @@ uint64_t create_process(int priority) {
 
 //Recorro la lista de procesos hasta encontrar el indicado y modifico su prioridad
 uint64_t update_process_priority(int pid, int priority) {
-    process_list_current = process_list_first;
-    while(process_list_current != NULL){
-        process_list_current = process_list_current->next;
+    process_t * temp = process_list_first;
+    process_finder(pid, temp);
+    if(temp != NULL){
+        temp->ppriority = priority;
+    }else
+    {
+        return; //ERROR, NO ESTA EL PROCESO
     }
+    
 }
 
 //Recorro la lista de procesos hasta encontrar el indicado y modifico su state
 uint64_t update_process_state(int pid, char state) {
-
+    process_t * temp = process_list_first;
+    process_finder(pid, temp);
+    if(temp != NULL){
+        temp->status = state;
+    }else
+    {
+        return; //ERROR, NO ESTA EL PROCESO
+    }
 }
+
+void process_finder(int pid, process_t * temp) {
+    while(temp != NULL){
+        if(temp->pid == pid){
+            break;
+        }
+        temp = temp->next;
+    }
+    return;
+}
+
+
