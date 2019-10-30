@@ -15,7 +15,7 @@ int init = 0;
 /* Function to add a node. 
    This function expects a pointer to the data to be added 
    and size of the data type */
-int add(node_t* head,void *new_data, size_t data_size) 
+int add(node_t** head,void *new_data, size_t data_size) 
 { 
     // head should not be null
     if (head == NULL ){
@@ -34,13 +34,13 @@ int add(node_t* head,void *new_data, size_t data_size)
     }
     new_node->next = NULL; 
 
-    node_t* current = head;
-    while( current->next != NULL ){ 
+    node_t* current = (*head);
+    while( current != NULL ) {
         current = current->next;
     }
 
-    current->next = new_node;
-
+    current = new_node;
+    
     // Copy contents of new_data to newly allocated memory. 
     // Assumption: char takes 1 byte. 
     int i; 
