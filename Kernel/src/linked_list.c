@@ -3,14 +3,9 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <string.h>
-
-typedef struct node {
-    void *data;
-    struct node * next;
-} node_t;
+#include <linked_list.h>
 
 node_t* head;
-int init = 0;
 
 /* Function to add a node. 
    This function expects a pointer to the data to be added 
@@ -40,7 +35,7 @@ int add(node_t** head,void *new_data, size_t data_size)
     }
 
     current = new_node;
-    
+
     // Copy contents of new_data to newly allocated memory. 
     // Assumption: char takes 1 byte. 
     int i; 
