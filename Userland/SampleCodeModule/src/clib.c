@@ -169,11 +169,12 @@ int free(uint64_t addr) {
 }
 
 void printMemState() {
+    uint64_t var = syscall(10,0,0,0);
     puts("Memoria total administrada: ");
-    printf("%d", syscall(MEMORY_STATE_ID,0,0,0));
+    printf("%d", var);
     puts("\n");
     puts("Memoria libre disponible: ");
-    printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
+    printf("%d", syscall(10,1,0,0));
     puts("\n");
 }
 

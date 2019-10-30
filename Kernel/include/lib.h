@@ -11,6 +11,6 @@ char * cpu_vendor(char *result);
 uint64_t malloc( unsigned long bytes );
 char read_port(char port);
 void write_port(char port, char reg);
-void set_stack(unsigned long addr);
+void set_stack(void *addr,void *rip);
 void context_asm(unsigned long old_stack, unsigned long new_stack);
 #endif
