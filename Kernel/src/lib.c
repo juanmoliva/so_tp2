@@ -45,6 +45,6 @@ void * memcpy(void * destination, const void * source, uint64_t length) {
 	return destination;
 }
 
-uint64_t malloc( unsigned long bytes ) {
-	return memory_handler(0,bytes);
+void *malloc( unsigned long bytes ) {
+	return (void *) memory_handler(0,bytes);
 }

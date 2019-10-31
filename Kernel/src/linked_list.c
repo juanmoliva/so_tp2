@@ -1,16 +1,16 @@
-
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <string.h>
 #include <linked_list.h>
+#include <lib.h>
 
 node_t* head;
 
 /* Function to add a node. 
    This function expects a pointer to the data to be added 
    and size of the data type */
-int add(node_t** head,void *new_data, size_t data_size) 
+int add(void **head,void *new_data, size_t data_size) 
 { 
     // head should not be null
     if (head == NULL ){
@@ -19,17 +19,17 @@ int add(node_t** head,void *new_data, size_t data_size)
 
     // Allocate memory for node 
     node_t* new_node = (node_t*)malloc(sizeof(node_t)); 
-    if (new_node == -1) {
+    if (new_node == NULL) {
         return -1;
     }
 
     new_node->data  = malloc(data_size); 
-    if (new_node->data == -1) {
+    if (new_node->data == NULL) {
         return -1;
     }
     new_node->next = NULL; 
 
-    node_t* current = (*head);
+    node_t* current = (node_t*)(*head);
     while( current != NULL ) {
         current = current->next;
     }
@@ -43,6 +43,7 @@ int add(node_t** head,void *new_data, size_t data_size)
         *(char *)(new_node->data + i) = *(char *)(new_data + i); 
     }
 
+    return 0;
 }
 
 void *data( node_t* node ) {

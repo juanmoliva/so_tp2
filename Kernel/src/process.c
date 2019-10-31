@@ -2,11 +2,10 @@
 #include <lib.h>
 #include <string.h>
 #include <linked_list.h>
+#include <process.h>
 
 /* TO DO
 base pointer de primer proceso??
-    //El unico momento donde tocan ASM es en cuanto al timertick. ( Lo puso el cordoba en el campus ).
-    // llamar al scheduler con tu SP atcual 
 ERROR handling en schedule()
 */
 
@@ -17,8 +16,7 @@ ERROR handling en schedule()
 //Este .c va a crear un proceso nuevo y administrar los existentes. Para que esto suceda se va a llevar un trackeo de todos los procesos en una lista de structs. 
 //Teniendo en cada struct toda la informacion de cada proceso. Esto va a permitir cambiar el proceso que corre facilmente
 
-// PROCESOS QUE EXISTEN.process_t *process_list[MAX_PID];
-process_t *process_list[MAX_PID]; 
+int get_free_pid();
 
 //Creo la struct
 typedef struct process {
@@ -30,12 +28,15 @@ typedef struct process {
     struct process * next;
 } process_t;
 
+// PROCESOS QUE EXISTEN.process_t *process_list[MAX_PID];
+process_t *process_list[MAX_PID]; 
+
 static unsigned char priority_flag = 0;
 
 //Creo el HEAD de la lista del scheduler.
 process_t * process_list_first, *process_list_current;
 
-void init_scheduler() {
+int init_scheduler() {
     // se llena la info del primer proceso.
 
     int pid = get_free_pid();
@@ -46,8 +47,8 @@ void init_scheduler() {
     }
 
     // Crear estructura del proceso e Inicializar todo
-    process_t * first = malloc( sizeof(process_t) );
-    if( first == -1 ){
+    process_t * first = (process_t *) malloc( sizeof(process_t) );
+    if( first == NULL ){
         return -1;
     }
     first->ppriority = 1;
@@ -57,11 +58,11 @@ void init_scheduler() {
     process_list[pid]= first;
 
     // agrego el proceso a la lista del scheduler.
-    add(&process_list_first, process_list[pid], sizeof(process_t));
+    add( (void **) &process_list_first, process_list[pid], sizeof(process_t));
     process_list_current = process_list_first;
 }
 
-uint64_t create_process(int priority, void *rip) {
+int create_process(int priority, void *rip) {
     int pid = get_free_pid();
     
     // devuelve -1 si no quedan lugares para el proceso
@@ -70,8 +71,8 @@ uint64_t create_process(int priority, void *rip) {
     }
 
     // Crear estructura del proceso e Inicializar todo
-    process_t * temp = malloc( sizeof(process_t) );
-    if( temp == -1 ){
+    process_t * temp = (process_t *) malloc( sizeof(process_t) );
+    if( temp == NULL ){
         return -1;
     }
 
@@ -85,7 +86,7 @@ uint64_t create_process(int priority, void *rip) {
 
     // Malloc espacio para el stack
     void *process_stack = malloc( STACK_SIZE );
-    if ( process_stack == -1) {
+    if ( process_stack == NULL ) {
         // error en malloc.
         return -1;
     }
@@ -97,8 +98,9 @@ uint64_t create_process(int priority, void *rip) {
     set_stack(process_list[pid]->sp,rip);
 
     // Lo agrego a la lista de procesos
-    add(&process_list_first, process_list[pid], sizeof(process_t));
+    add( (void **) &process_list_first, process_list[pid], sizeof(process_t));
 
+    return pid;
 }
 
 void *schedule(void *prev_rsp) {
@@ -144,44 +146,41 @@ int get_free_pid() {
 
 //Recorro la lista de procesos hasta encontrar el indicado y modifico su prioridad
 uint64_t update_process_priority(int pid, int priority) {
-    process_t * temp = process_list_first;
-    process_finder(pid, temp);
-    if(temp != NULL){
-        temp->ppriority = priority;
-    }else
-    {
-        return; //ERROR, NO ESTA EL PROCESO
-    }
     
+    if ( pid >= MAX_PID || pid < 0 || process_list[pid] == NULL ) {
+        //pid invalido
+        return -1;
+    }
+    if (priority != 0 && priority != 1) {
+        // prioridad invalida
+        return -2;
+    }
+
+    process_list[pid]->ppriority = priority;
+    return 0;
 }
 
 //Recorro la lista de procesos hasta encontrar el indicado y modifico su state
 uint64_t update_process_state(int pid, char state) {
-    process_t * temp = process_list_first;
-    process_finder(pid, temp);
-    if(temp != NULL){
-        temp->status = state;
-    }else
-    {
-        return; //ERROR, NO ESTA EL PROCESO
+    if ( pid >= MAX_PID || pid < 0 || process_list[pid] == NULL ) {
+        //pid invalido
+        return -1;
     }
+    if ( state != 'a' && state != 'b' ) {
+        // estado invalido
+        return -2;
+    }
+
+    process_list[pid]->status = state;
+    return 0;
 }
 
-void process_finder(int pid, process_t * temp) {
-    while(temp != NULL){
-        if(temp->pid == pid){
-            break;
-        }
-        temp = temp->next;
-    }
-    return;
-}
 
-uint64_t list_processes() {
+/* uint64_t list_processes() {
     process_t * temp = process_list_first;
     while(temp != NULL){
         //printf !!!! Aca printeo cada uno
         temp = temp->next;
     }
 
-}
+} */

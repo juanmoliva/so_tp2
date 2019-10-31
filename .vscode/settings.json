@@ -6,6 +6,7 @@
         "string.h": "c",
         "memory.h": "c",
         "console.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "linked_list.h": "c"
     }
 }

@@ -8,7 +8,7 @@ typedef struct node {
     struct node * next;
 } node_t;
 
-int add(node_t ** head,void *new_data, size_t data_size);
+int add(void ** head,void *new_data, size_t data_size);
 void *data( node_t* node );
 node_t *next(node_t* head, node_t* node );
 #endif
