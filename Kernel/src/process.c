@@ -205,8 +205,9 @@ uint64_t update_process_state(int pid, char state) {
 
 //Recorro los procesos y devuelvo el running.
 uint64_t get_pid() {
-    
-    return 0;
+    for (int i = 0; i < MAX_PID; i++)
+    {if(process_list[i]->status=="r") return i;}
+    return -1;
 }
 
 
