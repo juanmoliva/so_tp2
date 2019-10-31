@@ -55,7 +55,7 @@ void *data( node_t* node ) {
 
 node_t *next(node_t* head, node_t* node ) {
     // node should not be NULL.
-    if (node == NULL ){
+    if (node == NULL || head == NULL){
         return NULL;
     }
     

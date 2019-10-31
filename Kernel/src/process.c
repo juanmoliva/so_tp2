@@ -1,9 +1,17 @@
 #include <stdint.h>
 #include <lib.h>
 #include <string.h>
+#include <linked_list.h>
+
+/* TO DO
+base pointer de primer proceso??
+    //El unico momento donde tocan ASM es en cuanto al timertick. ( Lo puso el cordoba en el campus ).
+    // llamar al scheduler con tu SP atcual 
+ERROR handling en schedule()
+*/
 
 //Define el tamaño del stack
-#define STACK_SIZE 4000
+#define STACK_SIZE 2000
 #define MAX_PID 50
 
 //Este .c va a crear un proceso nuevo y administrar los existentes. Para que esto suceda se va a llevar un trackeo de todos los procesos en una lista de structs. 
@@ -14,7 +22,6 @@ process_t *process_list[MAX_PID];
 
 //Creo la struct
 typedef struct process {
-    unsigned long pid;
     unsigned char status; // READY/AVAILABLE ('a') , BLOCKED ('b') OR RUNNING ('r')
     unsigned char ppriority;
     void *bp;
@@ -25,53 +32,33 @@ typedef struct process {
 
 static unsigned char priority_flag = 0;
 
-//Creo el HEAD de la lista y el current (para iterarla)
-
-// current es el proceso que está en ejecución ahora
-
-process_t * process_list_first, * process_list_current;
+//Creo el HEAD de la lista del scheduler.
+process_t * process_list_first, *process_list_current;
 
 void init_scheduler() {
-    //Inicializo el puntero al espacio donde va a ir el primer proceso
-    process_list_first = malloc( sizeof(process_t) );
-    process_list_current = process_list_first;
-    // llenar info de primer proceso
-    // -----------------------------------------------------------------------------
-}
+    // se llena la info del primer proceso.
 
-void context_switch() {
-    // si la flag de priority está en 1, no hay que cambiar contexto aun.
-    if( priority_flag ){
-        priority_flag = 0;
-        return;
-    }
-
-    // llamar scheduler / obtener siguiente proceso.
-    // buscar direccion del stack del nuevo proceso.
-    // cambiar contexto
-
-    process_t *process_list_previous = process_list_current;
-
-    // pongo en current el siguiente proceso
-    if ( process_list_current->next != NULL)
-        process_list_current = process_list_current->next;
-    else
-    {
-        process_list_current = process_list_first;
-    }
+    int pid = get_free_pid();
     
-    // si la prioridad del nuevo proceso es 0 (top priority), seteamos la priority flag para la proxima llamada a esta funcion.
-    if (process_list_current->ppriority == 0) {
-        // top priority
-        priority_flag = 1;
+    // devuelve -1 si no quedan lugares para el proceso
+    if(pid == -1) {
+        return -1;
     }
 
-    // cambiar contextos con funcion en assembler.
-    // ( no implementada )
-    // context_asm(process_list_previous->sp, process_list_current->sp);
-    // -----------------------------------------------------------------------------
+    // Crear estructura del proceso e Inicializar todo
+    process_t * first = malloc( sizeof(process_t) );
+    if( first == -1 ){
+        return -1;
+    }
+    first->ppriority = 1;
+    first->status = 'r'; 
+    
+    //Inserto en array
+    process_list[pid]= first;
 
-
+    // agrego el proceso a la lista del scheduler.
+    add(&process_list_first, process_list[pid], sizeof(process_t));
+    process_list_current = process_list_first;
 }
 
 uint64_t create_process(int priority, void *rip) {
@@ -109,47 +96,37 @@ uint64_t create_process(int priority, void *rip) {
     //Seteo el STACK
     set_stack(process_list[pid]->sp,rip);
 
-
-
     // Lo agrego a la lista de procesos
-
-        //Creo un iterador de la lista
-        process_t * current = process_list_first;
-
-        //Ciclo mientras que tenga otro elemento
-        while(current->next != NULL){
-            //Consumo hasta llegar al final
-            current->next;
-        }
-
-        temp->pid = (current->pid) + 1;
-        current->next = temp;
-        
-    // Le aviso al scheduler que tiene un proceso mas para ejecutar
-
-    
-
-    //El unico momento donde tocan ASM es en cuanto al timertick. ( Lo puso el cordoba en el campus ).
-    // llamar al scheduler con tu SP atcual 
-
-
-    
-    // funcion de assembler que llena el stack con lo que tiene que tener 
-    set_stack(process_stack, rip);
+    add(&process_list_first, process_list[pid], sizeof(process_t));
 
 }
 
-//Recorro la lista de procesos hasta encontrar el indicado y modifico su prioridad
-uint64_t update_process_priority(int pid, int priority) {
-    process_t * temp = process_list_first;
-    process_finder(pid, temp);
-    if(temp != NULL){
-        temp->ppriority = priority;
-    }else
-    {
-        return; //ERROR, NO ESTA EL PROCESO
+void *schedule(void *prev_rsp) {
+
+    // si la flag de priority está en 1, no hay que cambiar contexto aun.
+    if( priority_flag ){
+        priority_flag = 0;
+        return prev_rsp;
     }
-    
+   
+   process_list_current->sp = prev_rsp;
+   process_list_current->status = 'a';
+
+   // cambiamos el proceso actual.
+   process_list_current = next(process_list_first, process_list_current);
+   if ( process_list_current == NULL ) {
+       // ERROR
+   }
+
+   process_list_current->status = 'r';
+
+    // si la prioridad del nuevo proceso es 0 (top priority), seteamos la priority flag para la proxima llamada a esta funcion.
+    if(process_list_current->ppriority == 0) {
+        // top priority
+        priority_flag = 1;
+    }
+
+    return process_list_current->sp;
 }
 
 int get_free_pid() {
@@ -163,6 +140,19 @@ int get_free_pid() {
         
     }
     return -1;
+}
+
+//Recorro la lista de procesos hasta encontrar el indicado y modifico su prioridad
+uint64_t update_process_priority(int pid, int priority) {
+    process_t * temp = process_list_first;
+    process_finder(pid, temp);
+    if(temp != NULL){
+        temp->ppriority = priority;
+    }else
+    {
+        return; //ERROR, NO ESTA EL PROCESO
+    }
+    
 }
 
 //Recorro la lista de procesos hasta encontrar el indicado y modifico su state
@@ -195,6 +185,3 @@ uint64_t list_processes() {
     }
 
 }
-
-
-// CUANDO LLAMAMOS AL SCHEDULER RECIBIMOS UN STACK POINTER Y DEVOLVEMOS OTRO.

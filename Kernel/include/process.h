@@ -3,7 +3,7 @@
 
 void init_process_list();
 void init_scheduler();
-void context_switch();
+void *schedule(void *prev_rsp);
 uint64_t create_process();
 
 

@@ -46,13 +46,14 @@ cpu_vendor:
 
 ; set_stack(unsigned long addr)
 set_stack:
+	push rbp
 	mov rbp, rsp
-	mov rsp, rax
+	mov rsp, rdi
 	push 0x000 ; SS
-	push rax
+	push rdi
 	push 0x202 ; RFLAGS
 	push 0x8 ; CS
-	push rbx ; rip
+	push rsi ; rip
 	push 0x0 ; pushaq registers
 	push 0x0
 	push 0x0
@@ -62,8 +63,6 @@ set_stack:
 	push 0x0
 	push 0x0
 	mov rsp, rbp
+	pop rbp
 	ret
 
-
-; context_asm(unsigned long old_stack, unsigned long new_stack)
-context_asm:

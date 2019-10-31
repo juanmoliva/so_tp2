@@ -5,6 +5,7 @@
         "lib.h": "c",
         "string.h": "c",
         "memory.h": "c",
-        "console.h": "c"
+        "console.h": "c",
+        "time.h": "c"
     }
 }
