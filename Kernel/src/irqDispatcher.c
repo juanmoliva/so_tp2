@@ -11,7 +11,7 @@ static void int_21();
 
 void (* handlers[]) () = {int_20, int_21};
 
-// Dispatcher for hardware interrupts
+// Dispatcher for hardware s
 void irqDispatcher(uint64_t irq) {
 	handlers[irq]();
 }

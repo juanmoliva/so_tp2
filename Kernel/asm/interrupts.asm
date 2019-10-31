@@ -168,6 +168,8 @@ _irq00Handler:
 	out 20h, al
 
 	popStateAll
+
+
 	pushaq
 	mov rdi, rsp
 	call schedule

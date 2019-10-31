@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <lib.h>
 #include <string.h>
-#include <linked_list.h>
 #include <process.h>
 
 /* TO DO
@@ -116,11 +115,11 @@ int create_process(int priority, void *rip) {
     process_node->pid = pid;
     process_node->next = NULL;
     
-    node_t *temp = process_list_first;
-    while(temp->next != NULL ) {
-        temp=temp->next;
+    node_t *curr = process_list_first;
+    while(curr->next != NULL ) {
+        curr=curr->next;
     }
-    temp->next = process_node;
+    curr->next = process_node;
 
 
     return pid;
@@ -133,8 +132,10 @@ void *schedule(void *prev_rsp) {
         priority_flag = 0;
         return prev_rsp;
     }
+
    int curr_pid = process_list_current->pid;
 
+   // cambiamos la info del proceso viejo.
    process_list[curr_pid]->sp = prev_rsp;
    process_list[curr_pid]->status = 'a';
 
@@ -149,7 +150,7 @@ void *schedule(void *prev_rsp) {
    int new_pid = process_list_current->pid;
    
    process_list[new_pid]->status = 'r';
-
+    
     // si la prioridad del nuevo proceso es 0 (top priority), seteamos la priority flag para la proxima llamada a esta funcion.
     if(process_list[new_pid]->ppriority == 0) {
         // top priority
@@ -210,6 +211,15 @@ uint64_t get_pid() {
     return -1;
 }
 
+// Kill process
+uint64_t kill_process(int pid) {
+    // Liberamos la memoria del proceso.
+    // 
+    free(process_list[pid]);
+
+
+}
+
 
 /* uint64_t list_processes() {
     process_t * temp = process_list_first;
@@ -219,3 +229,4 @@ uint64_t get_pid() {
     }
 
 } */
+
