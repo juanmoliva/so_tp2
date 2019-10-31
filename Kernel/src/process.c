@@ -28,6 +28,8 @@ typedef struct process {
     struct process * next;
 } process_t;
 
+
+
 // PROCESOS QUE EXISTEN.process_t *process_list[MAX_PID];
 process_t *process_list[MAX_PID]; 
 
@@ -35,6 +37,9 @@ static unsigned char priority_flag = 0;
 
 //Creo el HEAD de la lista del scheduler.
 process_t * process_list_first, *process_list_current;
+
+// puntero a la lista del scheduler
+int *schedule_list;
 
 int init_scheduler() {
     // se llena la info del primer proceso.
@@ -58,7 +63,7 @@ int init_scheduler() {
     process_list[pid]= first;
 
     // agrego el proceso a la lista del scheduler.
-    add( (void **) &process_list_first, process_list[pid], sizeof(process_t));
+    add( (void **) &schedule_list, &pid, sizeof(int));
     process_list_current = process_list_first;
 }
 
@@ -172,6 +177,12 @@ uint64_t update_process_state(int pid, char state) {
     }
 
     process_list[pid]->status = state;
+    return 0;
+}
+
+//Recorro los procesos y devuelvo el running.
+uint64_t get_pid() {
+    
     return 0;
 }
 
