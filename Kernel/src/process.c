@@ -28,7 +28,11 @@ typedef struct process {
     struct process * next;
 } process_t;
 
-
+//struct para scheduler
+typedef struct node {
+    int pid;
+    struct node *next;
+} node_t;
 
 // PROCESOS QUE EXISTEN.process_t *process_list[MAX_PID];
 process_t *process_list[MAX_PID]; 
@@ -36,10 +40,7 @@ process_t *process_list[MAX_PID];
 static unsigned char priority_flag = 0;
 
 //Creo el HEAD de la lista del scheduler.
-process_t * process_list_first, *process_list_current;
-
-// puntero a la lista del scheduler
-int *schedule_list;
+node_t * process_list_first, *process_list_current;
 
 int init_scheduler() {
     // se llena la info del primer proceso.
@@ -63,7 +64,12 @@ int init_scheduler() {
     process_list[pid]= first;
 
     // agrego el proceso a la lista del scheduler.
-    add( (void **) &schedule_list, &pid, sizeof(int));
+    process_list_first = malloc(sizeof(node_t));
+    if(process_list_first == NULL) {
+        return -1;
+    }
+    process_list_first->pid = pid;
+    process_list_first->next = NULL;
     process_list_current = process_list_first;
 }
 
@@ -102,8 +108,20 @@ int create_process(int priority, void *rip) {
     //Seteo el STACK
     set_stack(process_list[pid]->sp,rip);
 
-    // Lo agrego a la lista de procesos
-    add( (void **) &process_list_first, process_list[pid], sizeof(process_t));
+    // agrego el proceso a la lista del scheduler.
+    node_t *process_node = (node_t *) malloc(sizeof(node_t));
+    if(process_node == NULL) {
+        return -1;
+    }
+    process_node->pid = pid;
+    process_node->next = NULL;
+    
+    node_t *temp = process_list_first;
+    while(temp->next != NULL ) {
+        temp=temp->next;
+    }
+    temp->next = process_node;
+
 
     return pid;
 }
@@ -115,25 +133,30 @@ void *schedule(void *prev_rsp) {
         priority_flag = 0;
         return prev_rsp;
     }
-   
-   process_list_current->sp = prev_rsp;
-   process_list_current->status = 'a';
+   int curr_pid = process_list_current->pid;
+
+   process_list[curr_pid]->sp = prev_rsp;
+   process_list[curr_pid]->status = 'a';
 
    // cambiamos el proceso actual.
-   process_list_current = next(process_list_first, process_list_current);
-   if ( process_list_current == NULL ) {
-       // ERROR
+   if (process_list_current->next == NULL) {
+       process_list_current = process_list_first;
+   }
+   else {
+       process_list_current = process_list_current->next;
    }
 
-   process_list_current->status = 'r';
+   int new_pid = process_list_current->pid;
+   
+   process_list[new_pid]->status = 'r';
 
     // si la prioridad del nuevo proceso es 0 (top priority), seteamos la priority flag para la proxima llamada a esta funcion.
-    if(process_list_current->ppriority == 0) {
+    if(process_list[new_pid]->ppriority == 0) {
         // top priority
         priority_flag = 1;
     }
 
-    return process_list_current->sp;
+    return process_list[new_pid]->sp;
 }
 
 int get_free_pid() {
