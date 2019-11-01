@@ -1,10 +1,10 @@
 
-
-//Creo la struct de fds
-typedef struct fd {
-    int fd_number;
-
-} fd_t;
+//Creo la struct de semaforos
+typedef struct sem {
+    int identifier;
+    int counter;
+    struct sem* next;
+} sem_t;
 
 // semaforos:
 // - se inicializan en 1, los identifica un numero que es el ID.
@@ -13,4 +13,24 @@ typedef struct fd {
 // - antes del wait se verifica el contador, si esta en 0:
 //          1 - bloquear el proceso y ponerlo en la lista de bloqueados para ese semaforo.
 // - si se hace post y el semaforo estaba en 0:
+
 //          2 - desbloquear un proceso de la lista de bloqueados de ese semaforo.
+
+int next_identifier = 0;
+sem_t *first_sem;
+
+sem_init( int identifier, int initial_count ) {
+    // fijarnos que identificador no se haya usado 
+    
+    // malloc para nuevo semaforo
+    sem_t *new_sem = malloc(sizeof(sem_t));
+    new_sem->identifier = identifier;
+    new_sem->counter = initial_count;
+
+    //agrego el nuevo semaforo a la lista
+    sem_t *current = first_sem;
+    while( current != NULL ) {
+        current = current->next;
+    }
+    current = new_sem;
+}
