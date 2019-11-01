@@ -12,4 +12,7 @@ void *malloc( unsigned long bytes );
 char read_port(char port);
 void write_port(char port, char reg);
 void set_stack(void *addr,void *rip);
+void sem_up(void *addr);
+void sem_down(void *addr);
+
 #endif

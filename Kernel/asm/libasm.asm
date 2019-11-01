@@ -2,6 +2,8 @@ GLOBAL cpu_vendor
 GLOBAL write_port
 GLOBAL read_port
 GLOBAL set_stack
+GLOBAL sem_up
+GLOBAL sem_down
 
 
 section .text
@@ -66,3 +68,32 @@ set_stack:
 	pop rbp
 	ret
 
+; sem_up
+
+sem_up:
+push rbp
+	mov rbp, rsp
+	push rax
+	mov rax, [rdi] 
+	inc rax
+	xchg rax, rdi
+	pop rax
+	mov rsp, rbp
+	pop rbp
+	ret
+
+; sem_down, recibe en RDI la dir del contador a restar
+
+sem_down:
+	push rbp
+	mov rbp, rsp
+	push rax
+
+	mov rax, [rdi] 
+	dec rax
+	xchg rax, rdi
+	
+	pop rax
+	mov rsp, rbp
+	pop rbp
+	ret

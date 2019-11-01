@@ -1,10 +1,8 @@
-
-//Creo la struct de semaforos
-typedef struct sem {
-    int identifier;
-    int counter;
-    struct sem* next;
-} sem_t;
+#include <lib.h>
+#include <process.h>
+#include <string.h>
+#include <synchro.h>
+#include <memory.h>
 
 // semaforos:
 // - se inicializan en 1, los identifica un numero que es el ID.
@@ -19,7 +17,7 @@ typedef struct sem {
 int next_identifier = 0;
 sem_t *first_sem;
 
-sem_init( int identifier, int initial_count ) {
+int sem_init( int identifier, int initial_count ) {
     // fijarnos que identificador no se haya usado 
     
     // malloc para nuevo semaforo
@@ -33,4 +31,86 @@ sem_init( int identifier, int initial_count ) {
         current = current->next;
     }
     current = new_sem;
+
+    return 0;
+}
+
+//Buscar el semaforo con el ID = identifier
+sem_t *sem_open( int identifier) {
+    //busco el semaforo en la lista
+    sem_t *current = first_sem;
+    while( current != NULL && current->identifier != identifier) { 
+        current = current->next;
+    }
+
+    // si es NULL no se encontró el semaforo.
+    return current;
+}
+
+int sem_wait( int identifier ) {
+    sem_t *sem = sem_open(identifier);
+    // si sem es null, el identificador es invalido.
+    if (sem == NULL) {
+        return 1;
+    }
+
+    if ( sem->counter == 0 ){
+        // bloquear proceso.
+        int pid = getpid();
+        update_process_state(pid, 'b');
+        
+    }
+    else {
+        sem_down( &sem->counter );
+    }
+
+    return 0;
+}
+
+int sem_post( int identifier ) {
+    sem_t *sem = sem_open(identifier);
+    // si sem es null, el identificador es invalido.
+    if (sem == NULL) {
+        return 1;
+    }
+
+    sem_up( &sem->counter );
+
+    return 0;
+}
+
+//Aca cerramos un semaforo. Liberamos la memoria y lo sacamos de la lista
+int sem_close(int identifier) {
+    //Lo saco de la lista
+    sem_t * prev_current;
+    sem_t * current = first_sem;
+    while (current != NULL && current->identifier!=identifier)
+    {
+        prev_current = current;
+        current = current->next;
+    }
+    if (current == NULL)
+    {
+        //no esta ese semaforo abierto papa
+        return 1;
+    }else
+    {
+        //lo tengo q sacar de la lista
+        prev_current->next = current->next;
+        //y libero la memoria
+        free_block(current);
+        return 0;
+    }
+}
+
+//Aca mostramos la lista de todos los semaforos actuales -----------------------------------------------------
+void sem_list() {
+    //Recorro e imprimo
+    sem_t * current = first_sem;
+    while (current != NULL)
+    {
+        //PRINT
+        current = current->next;
+    }
+    return;
 }
