@@ -17,21 +17,7 @@ ERROR handling en schedule()
 
 int get_free_pid();
 
-//Creo la struct
-typedef struct process {
-    unsigned char status; // READY/AVAILABLE ('a') , BLOCKED ('b') OR RUNNING ('r')
-    unsigned char ppriority;
-    void *bp;
-    void *sp; // stack pointer
 
-    struct process * next;
-} process_t;
-
-//struct para scheduler
-typedef struct node {
-    int pid;
-    struct node *next;
-} node_t;
 
 // PROCESOS QUE EXISTEN.process_t *process_list[MAX_PID];
 process_t *process_list[MAX_PID]; 
@@ -58,6 +44,8 @@ int init_scheduler() {
     }
     first->ppriority = 1;
     first->status = 'r'; 
+    first->fd[0] = 0; // STDIN
+    first->fd[1] = 1; // STDOUT
     
     //Inserto en array
     process_list[pid]= first;
@@ -89,6 +77,8 @@ int create_process(int priority, void *rip) {
     //temp->pid Se hace mas adelante
     temp->ppriority = priority;
     temp->status = 'a'; 
+    temp->fd[0] = 0 ;// STDIN
+    temp->fd[1] = 1 ;// STDOUT
     
     //Inserto en array
     process_list[pid]= temp;
@@ -199,7 +189,8 @@ uint64_t update_process_state(int pid, char state) {
         // estado invalido
         return -2;
     }
-
+    //si es 'b' va a haber que sacarlo de running y ponerlo en una lista de 
+    // bloqueado
     process_list[pid]->status = state;
     return 0;
 }
@@ -209,6 +200,23 @@ uint64_t get_pid() {
     for (int i = 0; i < MAX_PID; i++)
     {if(process_list[i]->status=="r") return i;}
     return -1;
+}
+
+// devuelvo el nodo del processo ; recivo el pid
+process_t* get_Pnode(int pid){
+    if (pid >= MAX_PID || pid < 0){
+        return NULL;
+    }
+    return process_list[pid];
+}
+
+// devuelve pid ; pasandole el puntero
+int get_Process_Pid(process_t* process){
+    for (int i = 0; i < MAX_PID ; i++){
+        if(process_list[i]== process){return i;}
+    }
+    return -1;
+    
 }
 
 // Kill process

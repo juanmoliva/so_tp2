@@ -12,25 +12,33 @@
 //          1 - bloquear el proceso y ponerlo en la lista de bloqueados para ese semaforo.
 // - si se hace post y el semaforo estaba en 0:
 
-//          2 - desbloquear un proceso de la lista de bloqueados de ese semaforo.
+//          2 - desbloquear un proceso de la lista de bloqueados de ese semaforo. 
 
-int next_identifier = 0;
-sem_t *first_sem;
+sem_t *first_sem = NULL;
 
+// crear un nuevo semaforo
 int sem_init( int identifier, int initial_count ) {
     // fijarnos que identificador no se haya usado 
     
-    // malloc para nuevo semaforo
-    sem_t *new_sem = malloc(sizeof(sem_t));
-    new_sem->identifier = identifier;
-    new_sem->counter = initial_count;
-
-    //agrego el nuevo semaforo a la lista
-    sem_t *current = first_sem;
-    while( current != NULL ) {
-        current = current->next;
+    sem_t  * sem;
+    if ( first_sem == NULL ) {
+       first_sem = malloc(sizeof(sem_t));
+       sem = first_sem;
     }
-    current = new_sem;
+    else {
+        sem = first_sem;
+        while(sem->next != NULL){
+            sem = sem->next;
+        }
+
+        sem->next = malloc(sizeof(sem_t));
+        sem = sem->next;
+    }
+
+    sem->identifier = identifier;
+    sem->counter = initial_count;
+    sem->blocked_processes = NULL;
+    sem->next = NULL;
 
     return 0;
 }
@@ -56,13 +64,68 @@ int sem_wait( int identifier ) {
 
     if ( sem->counter == 0 ){
         // bloquear proceso.
+
+        //Obtengo el pid del procesos running
         int pid = getpid();
-        update_process_state(pid, 'b');
+
+        p_blocked_t  * pblocked;
+        if ( sem->blocked_processes == NULL ) {
+        sem->blocked_process = malloc(sizeof(p_blocked_t));
+        pblocked = sem->blocked_process;
+        }
+        else {
+            pblocked = sem->blocked_process;
+            while(pblocked->next != NULL){
+                pblocked = pblocked->next;
+            }
+            
+            pblocked->next = malloc(sizeof(p_blocked_t));
+            pblocked = pblocked->next;
+        }
+
+        pblocked->pid = pid;
+        pblocked->next = NULL;
+
+       /*  //Obtengo el nodo del puntero running
+        process_t * processNode = get_Pnode(pid);
+
+        // agrego nodo al final de la lista de procesos bloqueados
         
+        process_t * temp = sem->blocked_processes;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = processNode; */
+        
+        //Updateamos el state
+
+        update_process_state(pid, 'b');
+
+        // aca dejo de estar bloqueado, hay que sacarlo de la lista.
+        p_blocked_t * prev_c;
+        p_blocked_t * c = sem->blocked_processes;
+        while (c->next != NULL && p_blocked_t->pid != pid )
+        {   
+            prev_c = c;
+            c = c->next;
+        }
+        if (p_blocked_t->pid != pid)
+        {
+            //lo vuelo
+            prev_c->next = c->next;
+        }else
+        {
+            //sino retorno error
+            return 2;
+        }
+        
+        
+
+        // cuando retoma la ejecucion, sem->counter va a estar en 1.        
     }
-    else {
-        sem_down( &sem->counter );
-    }
+    sem_down( &sem->counter );
+    
 
     return 0;
 }
@@ -74,7 +137,27 @@ int sem_post( int identifier ) {
         return 1;
     }
 
+    if (sem->counter == 0) {
+        // vuelo un proceso de la lista de bloqueados
+        if( sem->blocked_processes == NULL ) {
+            // ningun proceso bloqueado.
+        }
+        else{
+            // saco el primer nodo de la lista.
+            p_blocked_t *temp = sem->blocked_processes;
+
+            update_process_state(temp->pid, 'a');
+
+            sem->blocked_processes = sem->blocked_processes->next;
+
+            free_block(temp);
+        }
+    }
+    
+
     sem_up( &sem->counter );
+
+
 
     return 0;
 }
