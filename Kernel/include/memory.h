@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-uint64_t allocate_blocks(uint64_t bytes);
-uint64_t free_block(uint64_t address);
-uint64_t cur_free_mem();
-uint64_t total_mem();
+void *allocate_blocks(int bytes);
+int free_block(void *address);
+int cur_free_mem();
+int total_mem();
 void init_mm();
 
 #endif

@@ -1,12 +1,12 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <memory.h>
-#include <string.h>
 #include <stdint.h>
 #define BLOCKSIZE 0x40
+#define NULL 0
 
 static void * start_memsegment = (void*)0x1000000;
-static void * end_memsegment = (void*)0x1100000;
+static void * end_memsegment = (void*)0x1500000;
 
 typedef struct node {
     unsigned char free;
@@ -34,11 +34,11 @@ void init_mm() {
     first->free = 1;
     first->next = NULL;
     first->startAddr = start_memsegment;
-    first->blocks = 0x100000 / BLOCKSIZE;
+    first->blocks = (int) (end_memsegment - start_memsegment) / BLOCKSIZE;
 }
 
 //Aca alocamos los bytes que nos pide el usuario
-uint64_t allocate_blocks(uint64_t bytes) {
+void *allocate_blocks(int bytes) {
     
     // si da justo entero se rompe.
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ uint64_t allocate_blocks(uint64_t bytes) {
 
     //Nos fuimos alfinal y no hay lugar
     if (current == NULL ) {
-        return -1;
+        return NULL;
     }
     // creamos un puntero al a la direccion correspondiente + tam requerido y metemos un nuevo nodo 
     else {
@@ -77,11 +77,11 @@ uint64_t allocate_blocks(uint64_t bytes) {
         current->next = aux->startAddr;
 
 
-        return (uint64_t)(current->startAddr + sizeof(node_t));
+        return (void *)(current->startAddr + sizeof(node_t));
     }
 }
 
-uint64_t free_block(uint64_t address) {
+int free_block(void *address) {
     // Si el bloque de memoria al que pertenece address fue asignado previamente, se "libera".
     // sino, no se hace nada.
 
@@ -89,7 +89,7 @@ uint64_t free_block(uint64_t address) {
 
     //Recorro todo hasta encontrar el lugar que me pasaron
     while ( current != NULL ) {
-        if ( (uint64_t)(current->startAddr + sizeof(node_t)) == address )
+        if ( (void *)(current->startAddr + sizeof(node_t)) == address )
         {
             break;
         }
@@ -112,7 +112,7 @@ uint64_t free_block(uint64_t address) {
     }
 }
 
-uint64_t cur_free_mem() {
+int cur_free_mem() {
     // devuelve la cantidad de memoria libre que hay.
 
     // Voy a tomar el first y recorrer todo sumando los free blocks
@@ -130,8 +130,8 @@ uint64_t cur_free_mem() {
     return freeBlocks * BLOCKSIZE;
 }
 
-uint64_t total_mem(uint64_t address) {
+int total_mem(void *address) {
     // devuelve la cantidad de memoria total que se administra.
 
-    return end_memsegment - start_memsegment;
+    return (int) (end_memsegment - start_memsegment);
 }

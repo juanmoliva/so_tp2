@@ -1,9 +1,10 @@
 #include <synchro.h>
-#include <string.h>
 #include <lib.h>
 #include <strings.h>
+#include <pipes.h>
 
 #define CRIT_REGION_SIZE 3000
+#define NULL 0
 
 // Creamos un pipe con un identificador.
 // Le asigna el pipe a un proceso para que pueda leer o escribir
@@ -47,6 +48,8 @@ int create_pipe(int identifier) {
     pipe->global_sem = sem_init(7*identifier, 1);
     pipe->critical_region = malloc(CRIT_REGION_SIZE);
     pipe->next = NULL;
+
+    return 0;
 }
 
 //Escribir en el pipe
@@ -91,4 +94,5 @@ int read_pipe(int identifier, void *destination) { //Aca lo podemos hacer de var
         //No esta el pipe
         return 1;
     }
+    return 0;
 }

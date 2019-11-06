@@ -2,6 +2,7 @@
 #define LIB_H
 
 #include <stdint.h>
+#define NULL 0
 
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
@@ -9,6 +10,7 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 char * cpu_vendor(char *result);
 
 void *malloc( unsigned long bytes );
+void _irq00Handler();
 char read_port(char port);
 void write_port(char port, char reg);
 void set_stack(void *addr,void *rip);

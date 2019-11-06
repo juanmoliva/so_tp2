@@ -10,6 +10,7 @@
 #include <videoDriver.h>
 #include <console.h>
 
+#include <interrupts.h>
 #include <memory.h>
 #include <process.h>
 //#include <time.h>
@@ -87,19 +88,16 @@ void * initializeKernelBinary()
 
 // 	return 0;
 // }
+void init_code() {
+	create_process(10,sampleCodeModuleAddress);
+}
 
 int main() {
-    // ncClear();
-    goToUserland();
-	// ncNewline();
+    create_process(0,&init_code);
 
-	// int i = 0;
-	// char car;
-    // while (i < 10) {
-    //     if ((car = read_character()) != 0){
-	// 		ncPrintChar(car);
-	// 		i++;
-	// 	}
-    // }
+	init_code();
+
+	_hlt();
+	
 	return 0;
 }

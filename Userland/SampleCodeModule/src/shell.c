@@ -4,11 +4,14 @@
 #include <shell.h>
 #include <utils.h>
 
-static char * command_strings[] = {"help", "date", "time", "sleep", "clear", "beep", "door", "div_zero", "inv_op", "exit"};
+static char * command_strings[] = {"help", "date", "time", "sleep", "clear", "beep", "door", "div_zero", "inv_op", "exit", "current_memory"};
 static int command_count = 10;
 void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd};
 
+
+
 #define MAX_LENGTH  50
+#define MEM_ADDRESS (void *)0x600000
 
 static void newLine(){
     putchar('\n');
@@ -34,6 +37,25 @@ void initScreen() {
     clearScreen();
     puts("Bienvenido al programa. El comando help lo ayudara\n");
     printMemState();
+    puts("Prueba de malloc: 50 bytes\n");
+    void *addr = malloc(50);
+    puts("Prueba de malloc: 500 bytes\n");
+    void *addr2 = malloc(500);
+    puts("Primer address recibida: ");
+    printf("%d", addr);
+    puts("\n");
+    puts("Segunda address recibida: ");
+    printf("%d", addr2);
+    puts("\n");
+    printMemState();
+    puts("\n");
+    puts("Hago frees....");
+    puts("\n");
+    free(addr);
+    free(addr2);
+    printMemState();
+    puts("\n");
+    
 }
 
 int getCommand(char * input){

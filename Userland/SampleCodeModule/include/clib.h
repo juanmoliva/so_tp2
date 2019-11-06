@@ -29,8 +29,13 @@ void exit();
 uint64_t getTicks();
 void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
 void printMemState();
-int free(uint64_t addr);
-uint64_t malloc(unsigned long bytes);
+int free(void *addr);
+void *malloc(unsigned long bytes);
+uint64_t fork(int priority,void *rip);
+uint64_t set_process_priority(int pid, int priority);
+uint64_t set_process_state(int pid, char state);
+uint64_t list_processes() ;
+
 
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 

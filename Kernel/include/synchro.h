@@ -3,6 +3,13 @@
 
 #include <process.h>
 
+typedef struct p_blocked{
+    int pid;
+    struct p_blocked * next;
+    
+} p_blocked_t;
+
+
 //Creo la struct de semaforos
 typedef struct sem {
     int identifier;
@@ -12,14 +19,6 @@ typedef struct sem {
     p_blocked_t * blocked_processes;
     
 } sem_t;
-
-typedef struct p_blocked{
-    int pid;
-    process_t * info:
-    struct p_blocked * next;
-    
-} p_blocked_t;
-
 
 
 int sem_init( int identifier, int initial_count );

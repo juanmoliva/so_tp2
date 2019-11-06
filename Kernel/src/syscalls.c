@@ -72,7 +72,7 @@ void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb) {
     // ncNewline();
 }
 
-uint64_t memory_handler(uint8_t flag,uint64_t num){
+void *memory_handler(uint8_t flag,int num){
     if(flag) {
         return free_block(num);
     }
@@ -90,8 +90,8 @@ uint64_t memory_state_handler(uint8_t free){
     }
 }
 
-uint64_t create_process_handler(int priority) {
-    return create_process(priority);
+uint64_t create_process_handler(void *rip, int priority) {
+    return create_process(priority, rip);
 }
 
 uint64_t update_process_priority_handler(int pid, int priority) {
@@ -103,5 +103,6 @@ uint64_t update_process_state_handler(int pid, char state) {
 }
 
 uint64_t list_processes_handler() {
-    return list_processes();
+    // return list_processes();
+    return 0;
 }

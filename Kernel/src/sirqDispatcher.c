@@ -100,8 +100,8 @@ uint64_t syscall_11 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* creates a new process, returns the new process id.
 	*/
 	//rsi ----> tiene la priority
-	//rdi --> pid
-	return create_process_handler((int) rsi);
+	//rdi ----> tiene el rip
+	return create_process_handler((void *) rdi,(int) rsi);
 }
 uint64_t syscall_12 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* UPDATE PROCESS PRIORITY

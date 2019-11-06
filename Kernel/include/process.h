@@ -20,8 +20,10 @@ typedef struct node {
 void init_process_list();
 int init_scheduler();
 void *schedule(void *prev_rsp);
-int create_process();
-
+int update_process_priority(int pid, int priority);
+int update_process_state(int pid, char state);
+int create_process(int priority, void *rip);
+int get_pid();
 
 
 #endif

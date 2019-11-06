@@ -9,6 +9,8 @@
         "time.h": "c",
         "linked_list.h": "c",
         "synchro.h": "c",
-        "process.h": "c"
+        "process.h": "c",
+        "clib.h": "c",
+        "syscalls.h": "c"
     }
 }

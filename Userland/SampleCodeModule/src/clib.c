@@ -160,12 +160,12 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     syscall(PIXEL_ID, x, y, rgb);
 }
 
-uint64_t malloc(unsigned long bytes) {
-    return syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
+void *malloc(unsigned long bytes) {
+    return (void *)syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
 }
 
-int free(uint64_t addr) {
-    return syscall(MEMORY_ALLOC_ID, 1, addr, 0);
+int free(void *addr) {
+    return syscall(MEMORY_ALLOC_ID, 1, (uint64_t) addr, 0);
 }
 
 void printMemState() {
@@ -178,8 +178,8 @@ void printMemState() {
     puts("\n");
 }
 
-uint64_t fork(int priority) {
-    return syscall(CREATE_PROCESS, 0 ,priority, 0);
+uint64_t fork(int priority,void *rip) {
+    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, 0);
 }
 
 uint64_t set_process_priority(int pid, int priority) {

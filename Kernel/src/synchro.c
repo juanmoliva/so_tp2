@@ -66,15 +66,15 @@ int sem_wait( int identifier ) {
         // bloquear proceso.
 
         //Obtengo el pid del procesos running
-        int pid = getpid();
+        int pid = get_pid();
 
         p_blocked_t  * pblocked;
         if ( sem->blocked_processes == NULL ) {
-        sem->blocked_process = malloc(sizeof(p_blocked_t));
-        pblocked = sem->blocked_process;
+        sem->blocked_processes = malloc(sizeof(p_blocked_t));
+        pblocked = sem->blocked_processes;
         }
         else {
-            pblocked = sem->blocked_process;
+            pblocked = sem->blocked_processes;
             while(pblocked->next != NULL){
                 pblocked = pblocked->next;
             }
@@ -105,12 +105,12 @@ int sem_wait( int identifier ) {
         // aca dejo de estar bloqueado, hay que sacarlo de la lista.
         p_blocked_t * prev_c;
         p_blocked_t * c = sem->blocked_processes;
-        while (c->next != NULL && p_blocked_t->pid != pid )
+        while (c->next != NULL && c->pid != pid )
         {   
             prev_c = c;
             c = c->next;
         }
-        if (p_blocked_t->pid != pid)
+        if (c->pid == pid)
         {
             //lo vuelo
             prev_c->next = c->next;
