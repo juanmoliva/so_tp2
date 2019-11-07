@@ -106,3 +106,14 @@ uint64_t list_processes_handler() {
     // return list_processes();
     return 0;
 }
+
+
+uint64_t list_sem_handler() {
+    // return list_processes();
+    return 0;
+}
+
+uint64_t list_pipes_handler() {
+    // return list_processes();
+    return 0;
+}

@@ -4,10 +4,11 @@
 #include <shell.h>
 #include <utils.h>
 
-static char * command_strings[] = {"help", "date", "time", "sleep", "clear", "beep", "door", "div_zero", "inv_op", "exit", "current_memory"};
-static int command_count = 10;
-void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd};
-
+static char * command_strings[] = {"help", "date", "time", "sleep", "clear", "beep", "door", "div_zero", "inv_op", "exit", "ps",
+                                   "sem","pipe","filter","wc","cat","block","kill","loop","nice","phylo","mem" };
+static int command_count = 21;
+void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
+                                      ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
 
 #define MAX_LENGTH  50
@@ -85,6 +86,10 @@ void help_cmd() {
     puts("\ndiv_zero ~ Ejecuta una division por cero");
     puts("\ninv_op ~ Ejecuta una operacion de codigo invalido ");
     puts("\nexit ~ Termina la ejecucion");
+    puts("\nps ~ lista todos los procesos");
+    puts("\nsem ~ lista todos los semaforos ");
+    puts("\npipe ~ lista todos los pipes");
+
 }
 
 void date_cmd() {
@@ -149,4 +154,44 @@ void inv_op_cmd() {
 
 void exit_cmd() {
     puts("\nHasta Luego");
+}
+
+////////// tp2_so
+
+void ps_cmd(){
+    list_processes();
+}
+
+void sem_cmd(){ list_sem();
+}
+
+void pipe_cmd(){list_pipes();
+}
+
+void filter_cmd(){
+}
+
+void wc_cmd(){
+}
+
+void cat_cmd(){
+}
+
+void block_cmd(){
+}
+
+void kill_cmd(){
+}
+
+void loop_cmd(){
+}
+
+void nice_cmd(){
+}
+
+void phylo_cmd(){
+}
+
+void mem_cmd(){
+
 }
