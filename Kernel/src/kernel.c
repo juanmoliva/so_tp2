@@ -89,14 +89,17 @@ void * initializeKernelBinary()
 // 	return 0;
 // }
 void init_code() {
+	//Esto crea otro proceso que es el SHELL
 	create_process(10,sampleCodeModuleAddress);
 }
 
 int main() {
+	//Creamos primer proceso! Proceso Padre.
     create_process(0,&init_code);
-
+	//Corremos init_code osea la funcion del primer proceso
 	init_code();
 
+	//La funcion HLT espera una interrupcion de hardware (un timer tick) 
 	_hlt();
 	
 	return 0;

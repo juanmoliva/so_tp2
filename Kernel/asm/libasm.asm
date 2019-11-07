@@ -50,12 +50,14 @@ cpu_vendor:
 set_stack:
 	push rbp
 	mov rbp, rsp
+
+	;Asigno en el stack pointer el parametro que recibi (osea el stack pointer del proceso actual)
 	mov rsp, rdi
-	push 0x000 ; SS
+	push 0x000 ; SS ; IRET
 	push rdi
 	push 0x202 ; RFLAGS
 	push 0x8 ; CS
-	push rsi ; rip
+	push rsi ; rip   
 	push 0x0 ; pushaq registers
 	push rdi
 	push rdi
@@ -71,6 +73,8 @@ set_stack:
 	push rdi
 	push rdi
 	push rdi
+	mov rax, rsp
+
 	mov rsp, rbp
 	pop rbp
 	ret

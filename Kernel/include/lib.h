@@ -13,7 +13,7 @@ void *malloc( unsigned long bytes );
 void _irq00Handler();
 char read_port(char port);
 void write_port(char port, char reg);
-void set_stack(void *addr,void *rip);
+void *set_stack(void *addr,void *rip);
 void sem_up(void *addr);
 void sem_down(void *addr);
 
