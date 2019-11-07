@@ -136,22 +136,30 @@ uint64_t list_pipes_handler() {
 // sh: Shell de usuario que permita ejecutar las aplicaciones. ​DEBERÁ contar con algún mecanismo para determinar si va a ceder o no el foreground al proceso que se ejecuta, por ejemplo, bash ejecuta un programa en background cuando se agrega el símbolo “&” al final de un comando. Este requisito es ​MUY importante para poder demostrar el funcionamiento del sistema en general ya que en la mayoría de los casos es necesario ejecutar más de 1 proceso. La shell también ​DEBERÁ permitir conectar 2 procesos mediante un pipe, por ejemplo, bash hace esto al agregar el símbolo “|” entre los 2 programas a ejecutar.
 
 // Missing:
+
+//EASY (Algunos casi hechos)
 // ● help:​ muestra una lista con todos los comandos disponibles
 // ● mem: ​Imprime el estado de la memoria.
-// ● ps: ​Imprime la lista de todos los procesos con sus propiedades: nombre, ID,
-// prioridad, stack y base pointer, foreground y cualquier otra variable que consideren
-// necesaria.
-// ● loop:​ Imprime su ID con un saludo cada una determinada cantidad de segundos.
 // ● kill: ​Mata un proceso dado su ID.
 // ● nice:​ Cambia la prioridad de un proceso dado su ID y la nueva prioridad.
 // ● block:​ Cambia el estado de un proceso entre ​bloqueado ​y ​listo​ dado su ID.
-// ● cat: ​Imprime el stdin tal como lo recibe.
-// ● wc: ​Cuenta la cantidad de líneas del input.
-// ● filter​: Filtra las vocales del input.
 // ● sem: Imprime la lista de todos los semáforos con sus propiedades: estado, los
 // procesos bloqueados en cada uno y cualquier otra variable que consideren
 // necesaria.
 // ● pipe: Imprime la lista de todos los pipes con sus propiedades: estado, los procesos
 // bloqueados en cada uno y cualquier otra variable que consideren necesaria.
+
+//HARD
+// ● cat: ​Imprime el stdin tal como lo recibe.
+// ● wc: ​Cuenta la cantidad de líneas del input.
+// ● filter​: Filtra las vocales del input.
+// ● ps: ​Imprime la lista de todos los procesos con sus propiedades: nombre, ID,
+// prioridad, stack y base pointer, foreground y cualquier otra variable que consideren
+// necesaria.
+// ● loop:​ Imprime su ID con un saludo cada una determinada cantidad de segundos.
+
+//VERY HARD
 // ● phylo: Implementa el problema de los filósofos comensales. ​DEBERÁ permitir cambiar la cantidad de filósofos en runtime con las teclas “a” (add 1) y “r” (remove 1).
 // También ​DEBERÁ ​mostrar el estado de la mesa de forma sencilla pero legible.
+
+
