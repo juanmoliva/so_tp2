@@ -191,14 +191,23 @@ void *schedule(void *prev_rsp) {
         return process_list[0]->sp;
     }
 
-    // Si el proceso que estaba corriendo se bloqueo --> salio de la lista del scheduler
+    // Si el proceso que estaba corriendo se bloqueo o murió --> salio de la lista del scheduler
     // --> process_list_current=NULL --> actualizo su sp para cuando se desbloquee, cambio su status y  devuelvo el stack pointer de first
     if ( process_list_current == NULL ) {
         int pid = get_pid();
-        process_list[pid]->status= 'b';
-        process_list[pid]->sp = prev_rsp;
+        if ( pid == -1 ) {
+            // no se encontró un proceso que esté corriendo.
+            // debe ser porque el que estaba corriendo fue nismaneado!
+
+        } else {
+            // se encontró un proceso "corriendo"
+            // quiere decir que se sacó de la lista del scheduler por un bloqueo.
+            process_list[pid]->status= 'b';
+            process_list[pid]->sp = prev_rsp;
+        }
         // devuelvo el stack pointer de first
         process_list_current = process_list_first;
+        process_list[process_list_first->pid]->status = 'r';
         return process_list[process_list_first->pid]->sp;
 
     }
@@ -303,17 +312,17 @@ int removeProcess_scheduler( int pid ) {
             if( process_list_first->next != NULL) {
                 node_t *free_this = process_list_first;
                 process_list_first = process_list_first->next;
-                free(free_this);
+                free_block(free_this);
             }
             else {
                 // era el unico proceso en la lista
-                free(process_list_first);
+                free_block(process_list_first);
                 process_list_first = NULL;
             }
         }
         else {
         prev->next = curr->next;
-        free(curr);
+        free_block(curr);
         }
     }
 
@@ -423,15 +432,20 @@ int get_Process_Pid(process_t* process){
 }
 
 // Kill process
-uint64_t kill_process(int pid) {
-    // CHECKEAR MAX_PID
+int kill_process(int pid) {
     // no se puede matar el proceso 0.
-    // Liberamos la memoria del proceso.
-    // 
+    // Liberamos la memoria del proceso: lo sacamos de la lista del scheduler y/o del array de procesos
+
+    if ( pid <= 0 || pid >= MAX_PID || process_list[pid] == NULL) {
+        return 1;
+    }
+
+    removeProcess_scheduler(pid);
+
     free_block(process_list[pid]->bp);
+    free_block(process_list[pid]);
 
     return 0;
-
 }
 
 
