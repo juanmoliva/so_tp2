@@ -91,17 +91,17 @@ int create_process(int priority, void *rip) {
         return -1;
     }
 
-    process_list[pid]->bp = process_stack;
-    process_list[pid]->sp = process_list[pid]->bp + STACK_SIZE ;
-
-    //Seteo el STACK
-    set_stack(process_list[pid]->sp,rip);
-
     if ( pid!= 0) {
         // no es el primer proceso, va a ponerse en la lista del scheduler y ser administrado por el mismo.
     
         //Inserto en array
         process_list[pid]= temp;
+
+        process_list[pid]->bp = process_stack;
+        process_list[pid]->sp = process_list[pid]->bp + STACK_SIZE ;
+
+        //Seteo el STACK
+        set_stack(process_list[pid]->sp,rip);
 
         // agrego el proceso a la lista del scheduler.
         node_t *process_node = (node_t *) malloc(sizeof(node_t));
@@ -130,6 +130,12 @@ int create_process(int priority, void *rip) {
        
         //Inserto en array
         process_list[pid]= temp;
+
+        process_list[pid]->bp = process_stack;
+        process_list[pid]->sp = process_list[pid]->bp + STACK_SIZE ;
+
+        //Seteo el STACK
+        set_stack(process_list[pid]->sp,rip);
     }
 
     return pid;
@@ -145,7 +151,7 @@ void *schedule(void *prev_rsp) {
     }
     if ( prior_counter >= 0 ) {
         prior_counter--;
-        return prev_rsp;
+        return process_list[process_list_current->pid]->sp;
     }
 
     // si la lista del scheduler está vacía, no hay ningún proceso: llamamos a init, que va a crear la shell.

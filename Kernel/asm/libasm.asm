@@ -57,20 +57,20 @@ set_stack:
 	push 0x8 ; CS
 	push rsi ; rip
 	push 0x0 ; pushaq registers
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
-	push 0x0
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
+	push rdi
 	mov rsp, rbp
 	pop rbp
 	ret
