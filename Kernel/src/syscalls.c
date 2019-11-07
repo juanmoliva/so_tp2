@@ -133,7 +133,13 @@ uint64_t list_pipes_handler() {
 }
 
 // Done:
-// sh: Shell de usuario que permita ejecutar las aplicaciones. ​DEBERÁ contar con algún mecanismo para determinar si va a ceder o no el foreground al proceso que se ejecuta, por ejemplo, bash ejecuta un programa en background cuando se agrega el símbolo “&” al final de un comando. Este requisito es ​MUY importante para poder demostrar el funcionamiento del sistema en general ya que en la mayoría de los casos es necesario ejecutar más de 1 proceso. La shell también ​DEBERÁ permitir conectar 2 procesos mediante un pipe, por ejemplo, bash hace esto al agregar el símbolo “|” entre los 2 programas a ejecutar.
+// sh: Shell de usuario que permita ejecutar las aplicaciones. ​
+//DEBERÁ contar con algún mecanismo para determinar si va a ceder o no el foreground al proceso que se ejecuta, 
+//por ejemplo, bash ejecuta un programa en background cuando se agrega el símbolo “&” al final de un comando. 
+//Este requisito es ​MUY importante para poder demostrar el funcionamiento del sistema en general ya que 
+//en la mayoría de los casos es necesario ejecutar más de 1 proceso. 
+//La shell también ​DEBERÁ permitir conectar 2 procesos mediante un pipe, 
+//por ejemplo, bash hace esto al agregar el símbolo “|” entre los 2 programas a ejecutar.
 
 // Missing:
 
@@ -159,7 +165,8 @@ uint64_t list_pipes_handler() {
 // ● loop:​ Imprime su ID con un saludo cada una determinada cantidad de segundos.
 
 //VERY HARD
-// ● phylo: Implementa el problema de los filósofos comensales. ​DEBERÁ permitir cambiar la cantidad de filósofos en runtime con las teclas “a” (add 1) y “r” (remove 1).
+// ● phylo: Implementa el problema de los filósofos comensales. ​
+// DEBERÁ permitir cambiar la cantidad de filósofos en runtime con las teclas “a” (add 1) y “r” (remove 1).
 // También ​DEBERÁ ​mostrar el estado de la mesa de forma sencilla pero legible.
 
 
