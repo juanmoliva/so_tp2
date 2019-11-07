@@ -19,6 +19,8 @@
 #define UPDATE_PROCESS_PRIORITY 12
 #define UPDATE_PROCESS_STATE 13
 #define LIST_PROCESSES 14
+#define LIST_SEM 15
+#define LIST_PIPES 16
 
 #define STDIN       0
 #define STDOUT      1
@@ -160,12 +162,12 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     syscall(PIXEL_ID, x, y, rgb);
 }
 
-uint64_t malloc(unsigned long bytes) {
-    return syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
+void *malloc(unsigned long bytes) {
+    return (void *)syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
 }
 
-int free(uint64_t addr) {
-    return syscall(MEMORY_ALLOC_ID, 1, addr, 0);
+int free(void *addr) {
+    return syscall(MEMORY_ALLOC_ID, 1, (uint64_t) addr, 0);
 }
 
 void printMemState() {
@@ -178,8 +180,8 @@ void printMemState() {
     puts("\n");
 }
 
-uint64_t fork(int priority) {
-    return syscall(CREATE_PROCESS, 0 ,priority, 0);
+uint64_t fork(int priority,void *rip) {
+    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, 0);
 }
 
 uint64_t set_process_priority(int pid, int priority) {
@@ -190,6 +192,22 @@ uint64_t set_process_state(int pid, char state) {
     return syscall(UPDATE_PROCESS_STATE, pid ,state, 0);
 }
 
+/////// programas_tp2_so
+
 uint64_t list_processes() {
     return syscall(LIST_PROCESSES, 0 ,0, 0);
 }
+
+uint64_t list_sem() {
+    return syscall(LIST_SEM, 0 ,0, 0);
+}
+
+uint64_t list_pipes() {
+    return syscall(LIST_PIPES, 0 ,0, 0);
+}
+
+uint64_t list_processes() {
+    return syscall(LIST_PROCESSES, 0 ,0, 0);
+}
+
+
