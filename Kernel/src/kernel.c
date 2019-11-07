@@ -90,12 +90,12 @@ void * initializeKernelBinary()
 // }
 void init_code() {
 	//Esto crea otro proceso que es el SHELL
-	create_process(10,sampleCodeModuleAddress);
+	create_process(10,sampleCodeModuleAddress, "shell");
 }
 
 int main() {
 	//Creamos primer proceso! Proceso Padre.
-    create_process(0,&init_code);
+    create_process(0,&init_code, "init");
 	//Corremos init_code osea la funcion del primer proceso
 	init_code();
 

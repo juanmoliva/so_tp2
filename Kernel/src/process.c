@@ -3,6 +3,7 @@
 #include <string.h>
 #include <process.h>
 #include <memory.h>
+#include <interrupts.h>
 
 //Define el tamaño del stack
 #define STACK_SIZE 2000
@@ -69,7 +70,7 @@ int init_scheduler() {
 }
 
 // Crea un procesos con la respectiva PRIORIDAD y su IP
-int create_process(int priority, void *rip) { ///////
+int create_process(int priority, void *rip, char *name) { ///////
     // Asignamos al nuevo proceso un ID libre
     int pid = get_free_pid();
     // Devuelve -1 si no quedan lugares para el proceso
@@ -90,6 +91,7 @@ int create_process(int priority, void *rip) { ///////
     temp->status = 'a'; 
     temp->fd[0] = 0 ;// STDIN
     temp->fd[1] = 1 ;// STDOUT
+    temp->name = name;
 
     // Malloc espacio para el stack del proceso
     void *process_stack = malloc( STACK_SIZE );
@@ -179,7 +181,7 @@ void *schedule(void *prev_rsp) {
     // CASO 3
     if ( prior_counter >= 0 ) {
         prior_counter--;
-        return process_list[process_list_current->pid]->sp;
+        return prev_rsp;
     }
 
     // CASO 2 se retoma aca  
@@ -187,6 +189,18 @@ void *schedule(void *prev_rsp) {
     // Llamamos a init, que va a crear la shell.
     if ( process_list_first == NULL) {
         return process_list[0]->sp;
+    }
+
+    // Si el proceso que estaba corriendo se bloqueo --> salio de la lista del scheduler
+    // --> process_list_current=NULL --> actualizo su sp para cuando se desbloquee, cambio su status y  devuelvo el stack pointer de first
+    if ( process_list_current == NULL ) {
+        int pid = get_pid();
+        process_list[pid]->status= 'b';
+        process_list[pid]->sp = prev_rsp;
+        // devuelvo el stack pointer de first
+        process_list_current = process_list_first;
+        return process_list[process_list_first->pid]->sp;
+
     }
 
     // Si llegamos hasta aca hay que hacer un swapp de procesos!!!
@@ -251,7 +265,7 @@ int update_process_priority(int pid, int priority) {
         //pid invalido
         return -1;
     }
-    if (priority != 0 && priority != 1) {
+    if ( priority < 0 || priority > 10 ) {
         // prioridad invalida
         return -2;
     }
@@ -260,7 +274,89 @@ int update_process_priority(int pid, int priority) {
     return 0;
 }
 
+int removeProcess_scheduler( int pid ) {
+    // si el proceso se encuentra en el scheduler lo saco.
+    if ( process_list_first == NULL ){
+        // lista vacia
+        return 1;
+    }
+    
+    if (process_list[pid] == NULL ){
+        // si el proceso no existe no hago nada.
+        return 1;
+    }
+
+    node_t *curr = process_list_first;
+    node_t *prev;
+    while ( curr!=NULL && curr->pid != pid ) {
+        prev = curr;
+        curr = curr->next;
+    }
+    if( curr == NULL ) { 
+        // el proceso no está en la lista
+        return 1;
+    }
+    else {
+        // encontre el proceso
+        if ( process_list_first->pid == pid ) {
+            // era el primero de la lista
+            if( process_list_first->next != NULL) {
+                node_t *free_this = process_list_first;
+                process_list_first = process_list_first->next;
+                free(free_this);
+            }
+            else {
+                // era el unico proceso en la lista
+                free(process_list_first);
+                process_list_first = NULL;
+            }
+        }
+        else {
+        prev->next = curr->next;
+        free(curr);
+        }
+    }
+
+    // el proceso debe dejar de ejecutarse si está corriendo.
+    if ( process_list[pid]->status == 'r' ) {
+        process_list_current == NULL;
+        
+    }
+
+    return 0;
+}
+
+int addProcess_scheduler(int pid) {
+    if( process_list[pid] == NULL ) {
+        // el proceso no existe
+        return 1;
+    }
+
+    node_t *process =  (node_t *) malloc(sizeof(node_t));
+    if (process == NULL) {
+        return -2;
+    }
+    process->pid = pid;
+    process->next = NULL;
+
+    node_t *curr =process_list_first;
+    if (curr == NULL ){
+        // la lista estaba vacía.
+        process_list_first = process;
+        process_list_current = process_list_first;
+    } else {
+         //Si no es el primer procesos lo encadenamos alfinal
+        while(curr->next != NULL ) {
+            curr=curr->next;
+        }
+        curr->next = process;
+    }
+
+    return 0;
+}
+ 
 //Recorro la lista de procesos hasta encontrar el indicado y modifico su state
+// State puede ser 'a' o 'b' (available or blocked)
 int update_process_state(int pid, char state) {
     if ( pid >= MAX_PID || pid < 0 || process_list[pid] == NULL ) {
         //pid invalido
@@ -271,8 +367,34 @@ int update_process_state(int pid, char state) {
         return -2;
     }
     //si es 'b' va a haber que sacarlo de running y ponerlo en una lista de 
-    // bloqueado
-    process_list[pid]->status = state;
+    // bloqueados
+    if ( state = 'b' ) {
+        if( process_list[pid]->status != 'b' ) {
+            // saco proceso de la lista del scheduler.
+            // esta funcion maneja el caso de que el proceso se esté ejecutando.
+            removeProcess_scheduler(pid);
+            // si el proceso está siendo ejecutado, el status lo cambia el scheduler en la proxima interrupcion.
+            // si no, actualizo el estado.
+            if ( process_list[pid]->status != 'r') {
+                process_list[pid]->status = 'b';
+            }
+        }
+        else {
+            // ya estaba bloqueado
+            return 0;
+        }
+    }
+    else {
+        if ( process_list[pid]->status == 'b' ) {
+            // se desbloquea el proceso, se agrega a la lista del scheduler.
+            addProcess_scheduler(pid);
+            process_list[pid]->status = 'a';
+        }
+        else {
+            // ya estaba disponible
+            return 0;
+        }
+    }
     return 0;
 }
 

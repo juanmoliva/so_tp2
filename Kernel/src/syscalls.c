@@ -90,8 +90,8 @@ uint64_t memory_state_handler(uint8_t free){
     }
 }
 
-uint64_t create_process_handler(void *rip, int priority) {
-    return create_process(priority, rip);
+uint64_t create_process_handler(void *rip, int priority, char *name) {
+    return create_process(priority, rip, name);
 }
 
 uint64_t update_process_priority_handler(int pid, int priority) {
