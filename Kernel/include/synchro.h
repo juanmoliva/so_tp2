@@ -12,7 +12,7 @@ typedef struct p_blocked{
 
 //Creo la struct de semaforos
 typedef struct sem {
-    int identifier;
+    const char *identifier;
     int counter;
     struct sem* next;
     //lista de procesos bloqueados en un semaforo
@@ -21,11 +21,11 @@ typedef struct sem {
 } sem_t;
 
 
-int sem_init( int identifier, int initial_count );
-sem_t *sem_open( int identifier);
-int sem_wait( int identifier );
-int sem_post( int identifier ); 
+int sem_init(const char *, int initial_count );
+sem_t *sem_open(const char *str);
+int sem_wait(const char *identifier );
+int sem_post(const char *identifier ); 
 void sem_list();
-int sem_close(int identifier);
+int sem_close(const char *identifier);
 
 #endif

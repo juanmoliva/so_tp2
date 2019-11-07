@@ -4,6 +4,7 @@ GLOBAL read_port
 GLOBAL set_stack
 GLOBAL sem_up
 GLOBAL sem_down
+GLOBAL int_20
 
 
 section .text
@@ -105,6 +106,16 @@ sem_down:
 	xchg rax, rdi
 	
 	pop rax
+	mov rsp, rbp
+	pop rbp
+	ret
+
+int_20:
+	push rbp
+	mov rbp, rsp
+
+	int_20
+
 	mov rsp, rbp
 	pop rbp
 	ret

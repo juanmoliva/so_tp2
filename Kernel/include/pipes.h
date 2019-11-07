@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-int create_pipe(int identifier);
-int write_pipe(int identifier, const void *str);
-int read_pipe(int identifier, void *destination);
+int create_pipe(const char *identifier);
+int write_pipe(const char *identifier, const char *str);
+int read_pipe(const char *identifier,char *destination);
 
 #endif

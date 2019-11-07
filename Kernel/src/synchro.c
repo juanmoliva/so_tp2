@@ -5,19 +5,18 @@
 #include <memory.h>
 
 // semaforos:
-// - se inicializan en 1, los identifica un numero que es el ID.
-// - se inicializan con una función tipo sem_init();
+// - se inicializan en 1, los identifica una string que es el identificador.
+// - se inicializan con una función sem_init();
 // - si se hace wait el contador baja uno ( si no estaba en cero ) y si se hace post sube en uno.
 // - antes del wait se verifica el contador, si esta en 0:
 //          1 - bloquear el proceso y ponerlo en la lista de bloqueados para ese semaforo.
 // - si se hace post y el semaforo estaba en 0:
-
 //          2 - desbloquear un proceso de la lista de bloqueados de ese semaforo. 
 
 sem_t *first_sem = NULL;
 
 // crear un nuevo semaforo
-int sem_init( int identifier, int initial_count ) {
+int sem_init(const char *str, int initial_count ) {
     // fijarnos que identificador no se haya usado 
     
     sem_t  * sem;
@@ -35,7 +34,7 @@ int sem_init( int identifier, int initial_count ) {
         sem = sem->next;
     }
 
-    sem->identifier = identifier;
+    sem->identifier = str;
     sem->counter = initial_count;
     sem->blocked_processes = NULL;
     sem->next = NULL;
@@ -44,10 +43,10 @@ int sem_init( int identifier, int initial_count ) {
 }
 
 //Buscar el semaforo con el ID = identifier
-sem_t *sem_open( int identifier) {
+sem_t *sem_open(const char* str) {
     //busco el semaforo en la lista
     sem_t *current = first_sem;
-    while( current != NULL && current->identifier != identifier) { 
+    while( current != NULL && strcmp(current->identifier,str)) { 
         current = current->next;
     }
 
@@ -55,7 +54,7 @@ sem_t *sem_open( int identifier) {
     return current;
 }
 
-int sem_wait( int identifier ) {
+int sem_wait(const char *identifier) {
     sem_t *sem = sem_open(identifier);
     // si sem es null, el identificador es invalido.
     if (sem == NULL) {
@@ -65,7 +64,7 @@ int sem_wait( int identifier ) {
     if ( sem->counter == 0 ){
         // bloquear proceso.
 
-        //Obtengo el pid del procesos running
+        //Obtengo el pid del proceso running
         int pid = get_pid();
 
         p_blocked_t  * pblocked;
@@ -102,6 +101,8 @@ int sem_wait( int identifier ) {
 
         update_process_state(pid, 'b');
 
+        int_20();
+
         // aca dejo de estar bloqueado, hay que sacarlo de la lista.
         p_blocked_t * prev_c;
         p_blocked_t * c = sem->blocked_processes;
@@ -124,13 +125,14 @@ int sem_wait( int identifier ) {
 
         // cuando retoma la ejecucion, sem->counter va a estar en 1.        
     }
-    sem_down( &sem->counter );
-    
+    if (sem_down >= 1) {
+        sem_down( &sem->counter );
+    }
 
     return 0;
 }
 
-int sem_post( int identifier ) {
+int sem_post( const char *identifier ) {
     sem_t *sem = sem_open(identifier);
     // si sem es null, el identificador es invalido.
     if (sem == NULL) {
@@ -153,21 +155,18 @@ int sem_post( int identifier ) {
             free_block(temp);
         }
     }
-    
 
     sem_up( &sem->counter );
-
-
 
     return 0;
 }
 
 //Aca cerramos un semaforo. Liberamos la memoria y lo sacamos de la lista
-int sem_close(int identifier) {
+int sem_close(const char *identifier) {
     //Lo saco de la lista
     sem_t * prev_current;
     sem_t * current = first_sem;
-    while (current != NULL && current->identifier!=identifier)
+    while (current != NULL && strcmp(current->identifier,identifier))
     {
         prev_current = current;
         current = current->next;

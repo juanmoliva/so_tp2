@@ -387,6 +387,10 @@ int update_process_state(int pid, char state) {
             if ( process_list[pid]->status != 'r') {
                 process_list[pid]->status = 'b';
             }
+            else {
+                prior_counter = -1;
+            }
+
         }
         else {
             // ya estaba bloqueado
@@ -449,12 +453,18 @@ int kill_process(int pid) {
 }
 
 
-/* uint64_t list_processes() {
+char **list_processes() {
+    char* processes[MAX_PID];
     process_t * temp = process_list_first;
+    int i = 0;
+    if ( temp == NULL ) {
+        processes[i] = NULL;
+        return processes;
+    }
     while(temp != NULL){
-        //printf !!!! Aca printeo cada uno
+        processes
         temp = temp->next;
     }
 
-} */
+} 
 

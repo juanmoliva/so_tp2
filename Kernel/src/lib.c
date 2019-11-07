@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include <syscalls.h>
+#include <lib.h>
 
 void * memset(void * destination, int32_t c, uint64_t length) {
 	uint8_t chr = (uint8_t)c;
@@ -47,4 +48,12 @@ void * memcpy(void * destination, const void * source, uint64_t length) {
 
 void *malloc( unsigned long bytes ) {
 	return (void *) memory_handler(0,bytes);
+}
+
+int strcmp (const char *t, const char *s) {
+	while (*t==*s && *t!=0){
+		t++;
+		s++;
+	}
+	return *t-*s;
 }
