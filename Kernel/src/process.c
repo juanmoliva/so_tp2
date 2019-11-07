@@ -2,11 +2,8 @@
 #include <lib.h>
 #include <string.h>
 #include <process.h>
-<<<<<<< Updated upstream
-=======
 #include <memory.h>
 #include <naiveConsole.h>
->>>>>>> Stashed changes
 
 /* TO DO
 base pointer de primer proceso??
