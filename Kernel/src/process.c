@@ -69,7 +69,7 @@ int init_scheduler() {
 }
 
 // Crea un procesos con la respectiva PRIORIDAD y su IP
-int create_process(int priority, void *rip, char * name) { ///////
+int create_process(int priority, void *rip) { ///////
     // Asignamos al nuevo proceso un ID libre
     int pid = get_free_pid();
     // Devuelve -1 si no quedan lugares para el proceso
@@ -189,11 +189,12 @@ void *schedule(void *prev_rsp) {
         return process_list[0]->sp;
     }
 
-    //Si llegamos hasta aca hay que hacer un swapp de procesos!!!
+    // Si llegamos hasta aca hay que hacer un swapp de procesos!!!
     // Objetivos: 
-    // 1) Actualizar el SP del proceso viejo para la proxima vez que se llame (Actualizo los movimientos de ASM en C)
+    // 1) Actualizar el SP del proceso viejo para la proxima vez que se llame (Actualizo los movimientos de ASM en C). 
+    //    Updateo estado en "AVAILABLE"
     // 2) Pasar al proximo proceso (Recorro de forma circular, podria repetirse)
-    // 3) Actualizo los estados de los procesos en el arreglo. El viejo en "AVAILABLE" y el nuevo en "RUNNING".
+    // 3) Actualizo el estado del nuevo en "RUNNING".
 
     // CASO 1 //////////////////////////////////////
     // Me guardo el PID del viejo para luego poder modificar el estado en el array.
