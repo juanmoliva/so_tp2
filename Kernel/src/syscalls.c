@@ -9,6 +9,7 @@
 #include <memory.h>
 #include <process.h>
 #include <videoDriver.h>
+#include <strings.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count) {
     // File descriptor doesn't matter
@@ -102,14 +103,27 @@ uint64_t update_process_state_handler(int pid, char state) {
     return update_process_state(pid ,state);
 }
 
-uint64_t list_processes_handler() {
-    // return list_processes();
-    return 0;
+/// tp2
+
+char* list_processes_handler() {
+    char ps[500]; 
+    int j = 0;
+    process_t ** list = process_list_returner();
+     for (int i = 0; i < MAX_PID; i++)
+        {
+            if(list[i]!= NULL){
+                ps[j++] = int_to_string(i, 0 ,10);
+            }
+        ps[j++] = "-1";
+        }
+    
+    return ps;
 }
 
 
 uint64_t list_sem_handler() {
-    // return list_processes();
+
+    
     return 0;
 }
 

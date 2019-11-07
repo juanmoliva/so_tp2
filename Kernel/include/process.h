@@ -1,5 +1,6 @@
 #ifndef PROCESS_H_
 #define PROCESS_H_
+#define MAX_PID 50
 
 //Creo la struct
 typedef struct process {
@@ -25,6 +26,8 @@ int update_process_priority(int pid, int priority);
 int update_process_state(int pid, char state);
 int create_process(int priority, void *rip, char* name);
 int get_pid();
+process_t ** process_list_returner();
+
 
 
 #endif
