@@ -103,5 +103,20 @@ uint64_t update_process_state_handler(int pid, char state) {
 }
 
 uint64_t list_processes_handler() {
+<<<<<<< Updated upstream
     return list_processes();
+=======
+    // return list_processes();
+    return 0;
+}
+
+uint64_t list_sem_handler() {
+    // return list_processes();
+    return 0;
+}
+
+uint64_t list_pipes_handler() {
+    // return list_processes();
+    return 0;
+>>>>>>> Stashed changes
 }

@@ -9,6 +9,13 @@
         "time.h": "c",
         "linked_list.h": "c",
         "synchro.h": "c",
+<<<<<<< Updated upstream
         "process.h": "c"
+=======
+        "process.h": "c",
+        "clib.h": "c",
+        "syscalls.h": "c",
+        "videodriver.h": "c"
+>>>>>>> Stashed changes
     }
 }

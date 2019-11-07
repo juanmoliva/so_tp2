@@ -2,6 +2,11 @@
 #include <lib.h>
 #include <string.h>
 #include <process.h>
+<<<<<<< Updated upstream
+=======
+#include <memory.h>
+#include <naiveConsole.h>
+>>>>>>> Stashed changes
 
 /* TO DO
 base pointer de primer proceso??
@@ -229,12 +234,26 @@ uint64_t kill_process(int pid) {
 }
 
 
-/* uint64_t list_processes() {
-    process_t * temp = process_list_first;
-    while(temp != NULL){
-        //printf !!!! Aca printeo cada uno
-        temp = temp->next;
+uint64_t list_processes() {
+    for (int i = 0; i < MAX_PID; i++)
+    {   
+      if (process_list[i]!= NULL)
+       {
+        // Faltaria imprimir nombre
+        ncPrint("Pid: ");
+        ncPrintDec(i);
+        ncPrint("bp: ");
+        (process_list[i]->bp);// es un fucking void*
+        ncPrint("Priority: ");
+        ncPrintChar(process_list[i]->ppriority);
+        ncPrint("status: ");// es un fucking void*
+        (process_list[i]->sp);
+        ncPrint("status: ");
+        ncPrintChar(process_list[i]->status);
+        }
     }
+    
+           
+}
 
-} */
 
