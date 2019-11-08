@@ -453,9 +453,9 @@ int kill_process(int pid) {
 }
 
 
-char **list_processes() {
+/*char **list_processes() {
     char* processes[MAX_PID];
-    process_t * temp = process_list_first;
+    process_t * temp = process_list_first->pid;
     int i = 0;
     if ( temp == NULL ) {
         processes[i] = NULL;
@@ -465,5 +465,8 @@ char **list_processes() {
         temp = temp->next;
     }
 
-} 
+} */
 
+process_t **process_list_returner() {
+    return process_list;
+}

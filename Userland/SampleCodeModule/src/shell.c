@@ -26,6 +26,8 @@ void initShell() {
     while (command != EXIT_CMD) {
         puts(PROMPT_STRING);
         gets(input, MAX_LENGTH);
+        int index = readUntilSpace(input);
+        
         command = getCommand(input);
         executeCommand(command);
         if (command != CLEAR_CMD) newLine();
@@ -38,6 +40,14 @@ void initScreen() {
     clearScreen();
     
     
+    
+}
+
+int readUntilSpace(char *input) {
+    // lee input hasta el espacio y devuelve la cantidad de chars que se leyeron
+}
+
+int readAfterCommand(char *input, int index) {
     
 }
 
@@ -71,6 +81,7 @@ void help_cmd() {
     puts("\nps ~ lista todos los procesos");
     puts("\nsem ~ lista todos los semaforos ");
     puts("\npipe ~ lista todos los pipes");
+
 
 }
 
@@ -116,6 +127,7 @@ void door_cmd() {
     beep(DOOR_FREQ, 150);
     sleep(250);
     beep(DOOR_FREQ, 150);
+
     sleep(800);
     beep(DOOR_FREQ, 150);
     sleep(150);

@@ -179,7 +179,7 @@ void printMemState() {
 }
 
 int new_process(int priority,void *rip, const char *name) {
-    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, name);
+    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, (uint64_t) name);
 }
 
 uint64_t set_process_priority(int pid, int priority) {
@@ -191,5 +191,12 @@ uint64_t set_process_state(int pid, char state) {
 }
 
 uint64_t list_processes() {
+    return syscall(LIST_PROCESSES, 0 ,0, 0);
+}
+
+uint64_t list_sem() {
+    return syscall(LIST_PROCESSES, 0 ,0, 0);
+}
+uint64_t list_pipes() {
     return syscall(LIST_PROCESSES, 0 ,0, 0);
 }

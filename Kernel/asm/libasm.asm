@@ -114,7 +114,7 @@ int_20:
 	push rbp
 	mov rbp, rsp
 
-	int_20
+	int 20
 
 	mov rsp, rbp
 	pop rbp

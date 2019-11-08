@@ -13,6 +13,7 @@
         "clib.h": "c",
         "syscalls.h": "c",
         "pipes.h": "c",
-        "interrupts.h": "c"
+        "interrupts.h": "c",
+        "shell.h": "c"
     }
 }
