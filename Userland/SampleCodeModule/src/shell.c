@@ -159,7 +159,10 @@ void wc_cmd(){
 void cat_cmd(){
 }
 
-void block_cmd(){
+void block_cmd(int pid){
+    // USE CASE: block 34 ---> bloquea el proceso de pid 34
+    //Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
+
 }
 
 void kill_cmd(){

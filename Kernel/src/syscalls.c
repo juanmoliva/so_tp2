@@ -174,6 +174,14 @@ int read_pipe_handler(char *identifier, char *buff) {
 }
 
 // Done:
+// ● help:​ muestra una lista con todos los comandos disponibles
+// ● mem: ​Imprime el estado de la memoria.
+// ● kill: ​Mata un proceso dado su ID.
+// ● nice:​ Cambia la prioridad de un proceso dado su ID y la nueva prioridad.
+// ● block:​ Cambia el estado de un proceso entre ​bloqueado ​y ​listo​ dado su ID.
+
+
+// A ESTO LE FALTA RECIBIR MAS DE UN PARAMETRO!!!!!!!!
 // sh: Shell de usuario que permita ejecutar las aplicaciones. ​
 //DEBERÁ contar con algún mecanismo para determinar si va a ceder o no el foreground al proceso que se ejecuta, 
 //por ejemplo, bash ejecuta un programa en background cuando se agrega el símbolo “&” al final de un comando. 
@@ -185,11 +193,7 @@ int read_pipe_handler(char *identifier, char *buff) {
 // Missing:
 
 //EASY (Algunos casi hechos)
-// ● help:​ muestra una lista con todos los comandos disponibles
-// ● mem: ​Imprime el estado de la memoria.
-// ● kill: ​Mata un proceso dado su ID.
-// ● nice:​ Cambia la prioridad de un proceso dado su ID y la nueva prioridad.
-// ● block:​ Cambia el estado de un proceso entre ​bloqueado ​y ​listo​ dado su ID.
+
 // ● sem: Imprime la lista de todos los semáforos con sus propiedades: estado, los
 // procesos bloqueados en cada uno y cualquier otra variable que consideren
 // necesaria.
