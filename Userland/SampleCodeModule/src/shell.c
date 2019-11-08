@@ -36,26 +36,8 @@ void initShell() {
 
 void initScreen() {
     clearScreen();
-    puts("Bienvenido al programa. El comando help lo ayudara\n");
-    printMemState();
-    puts("Prueba de malloc: 50 bytes\n");
-    void *addr = malloc(50);
-    puts("Prueba de malloc: 500 bytes\n");
-    void *addr2 = malloc(500);
-    puts("Primer address recibida: ");
-    printf("%d", addr);
-    puts("\n");
-    puts("Segunda address recibida: ");
-    printf("%d", addr2);
-    puts("\n");
-    printMemState();
-    puts("\n");
-    puts("Hago frees....");
-    puts("\n");
-    free(addr);
-    free(addr2);
-    printMemState();
-    puts("\n");
+    
+    
     
 }
 

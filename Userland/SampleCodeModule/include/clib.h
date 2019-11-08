@@ -31,7 +31,7 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
 void printMemState();
 int free(void *addr);
 void *malloc(unsigned long bytes);
-uint64_t fork(int priority,void *rip);
+int new_process(int priority,void *rip, const char *name);
 uint64_t set_process_priority(int pid, int priority);
 uint64_t set_process_state(int pid, char state);
 uint64_t list_processes() ;

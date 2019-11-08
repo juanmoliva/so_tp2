@@ -178,8 +178,8 @@ void printMemState() {
     puts("\n");
 }
 
-uint64_t fork(int priority,void *rip) {
-    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, 0);
+int new_process(int priority,void *rip, const char *name) {
+    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, name);
 }
 
 uint64_t set_process_priority(int pid, int priority) {
