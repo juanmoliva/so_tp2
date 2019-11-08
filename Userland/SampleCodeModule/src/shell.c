@@ -10,9 +10,11 @@ static int command_count = 21;
 void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
                                       ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
-
+static char * pipes_strings[] = {"pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"}
 #define MAX_LENGTH  50
 #define MEM_ADDRESS (void *)0x600000
+#define STD_IN "std_in"
+#define STD_OUT "std_out"
 
 static void newLine(){
     putchar('\n');
@@ -22,25 +24,83 @@ void initShell() {
     initScreen();
     int command = NO_CMD;
     char input[MAX_LENGTH];
+    char shaved_input[MAX_LENGTH];
 
     while (command != EXIT_CMD) {
         puts(PROMPT_STRING);
         gets(input, MAX_LENGTH);
-        int index = readUntilSpace(input);
+        //FALTA SEPARAR EN ESPACIOS Y MANDARLE LA SALIDA DE UNO A LA ENTRADA DEL SIGUIENTE EN EL CASO DEL "cat | wc"
+        int char_read = 0;
+        int command_only = 0;
+        int new_process = 1;
+        int j = 0;
+        // user escribe " ps | cat "
+        for (int i = 0; i < MAX_LENGTH-1; i++)
+        {
+            if ( input[i] != ' ' && input[i] != '\n' ) {
+                char_read++;
+                shaved_input[j++] = input[i];
+            }
+            else if (input[i] == '\n' ) {
+                //corre normal
+                command_only = 1;
+                break;
+            }
+            else {
+                break;
+            }
+        }
+
+        // char_read = 2 porque ps tiene longitud dos
+        // ahora nos fijamos que hay en el indice char_read+1 (que hay despues del espacio)
+
+        //Aca cae solo si NO es un comando solo, es decir, tiene otro cosa dps de un PIPE
+        if ( !command_only ) { 
+            if ( input[char_read] == '|') {
+                // pipe
+                // crear pipe  --> 
+                int pipe_result = create_pipe()
+
+                
+            } else if ( input[char_read] == '&' ){
+                // background
+                // si piden background creamos un nuevo proceso con la funcion que piden, si no ejecutamos la funcion.
+                new_process = 1;
+            } else {
+                //parametro
+            }
+        }
+
+
         
-        command = getCommand(input);
-        executeCommand(command);
+        if(command_only){
+            command = getCommand(input); 
+        }
+        else{
+            command = getCommand(shaved_input); 
+        }
+        
+        if ( new_process ){ 
+           //
+           // new_process(3, &command, command_strings[command], param);
+        }
+        else {
+            // 
+            // executeCommand(command, params,in, out);
+        }
+       
+        
         if (command != CLEAR_CMD) newLine();
     }
 	
 	exit();
 }
 
+
+
+
 void initScreen() {
-    clearScreen();
-    
-    
-    
+    clearScreen();   
 }
 
 int readUntilSpace(char *input) {
@@ -48,7 +108,8 @@ int readUntilSpace(char *input) {
 }
 
 int readAfterCommand(char *input, int index) {
-    
+    // lee input + index y se fija lo que hay despues (del comando)
+
 }
 
 int getCommand(char * input){
@@ -174,10 +235,11 @@ void cat_cmd(){
 void block_cmd(int pid){
     // USE CASE: block 34 ---> bloquea el proceso de pid 34
     //Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
-
+    
 }
 
-void kill_cmd(){
+void kill_cmd(int id){
+    kill_process(id);
 }
 
 void loop_cmd(){
@@ -190,5 +252,21 @@ void phylo_cmd(){
 }
 
 void mem_cmd(){
+  
+  print_memstate();
 
 }
+
+
+// output( "hola", STD_OUT ){ 
+
+// }
+// output(char *str, char* pipe) {
+//    if(!strcmp(pipe,STD_OUT)) {
+//        // std_out
+//        puts(str);
+//    }
+//    else {
+//        write_pipe(pipe);
+//    }
+// }

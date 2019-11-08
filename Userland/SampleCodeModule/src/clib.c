@@ -19,6 +19,7 @@
 #define UPDATE_PROCESS_PRIORITY 12
 #define UPDATE_PROCESS_STATE 13
 #define LIST_PROCESSES 14
+#define KILL_PROCESS 18
 
 #define STDIN       0
 #define STDOUT      1
@@ -159,7 +160,7 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     uint64_t rgb = getRGB(r, g, b);
     syscall(PIXEL_ID, x, y, rgb);
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////
 void *malloc(unsigned long bytes) {
     return (void *)syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
 }
@@ -168,13 +169,13 @@ int free(void *addr) {
     return syscall(MEMORY_ALLOC_ID, 1, (uint64_t) addr, 0);
 }
 
-void printMemState() {
-    uint64_t var = syscall(10,0,0,0);
+void print_memstate() {
+    uint64_t var = syscall(MEMORY_STATE_ID,0,0,0);
     puts("Memoria total administrada: ");
     printf("%d", var);
     puts("\n");
     puts("Memoria libre disponible: ");
-    printf("%d", syscall(10,1,0,0));
+    printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
     puts("\n");
 }
 
@@ -200,3 +201,9 @@ uint64_t list_sem() {
 uint64_t list_pipes() {
     return syscall(LIST_PROCESSES, 0 ,0, 0);
 }
+
+uint64_t kill_process(int pid) {
+    return syscall(KILL_PROCESS, pid,0, 0);
+}
+
+uint64_t create_

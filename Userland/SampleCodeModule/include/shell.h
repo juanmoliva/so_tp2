@@ -13,7 +13,7 @@
 #define INV_OP_CMD      8
 #define EXIT_CMD        9
 
-#define PROMPT_STRING   "mjj@itba.edu.ar $ "
+#define PROMPT_STRING   "user@itba.edu.ar $ "
 #define BEEP_FREQ       400
 #define DOOR_FREQ       600
 

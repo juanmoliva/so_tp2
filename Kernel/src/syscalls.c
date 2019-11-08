@@ -175,8 +175,10 @@ int read_pipe_handler(char *identifier, char *buff) {
 
 // Done:
 // ● help:​ muestra una lista con todos los comandos disponibles
-// ● mem: ​Imprime el estado de la memoria.
 // ● kill: ​Mata un proceso dado su ID.
+
+// Almost Done:
+// ● mem: ​Imprime el estado de la memoria.
 // ● nice:​ Cambia la prioridad de un proceso dado su ID y la nueva prioridad.
 // ● block:​ Cambia el estado de un proceso entre ​bloqueado ​y ​listo​ dado su ID.
 
