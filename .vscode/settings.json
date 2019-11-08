@@ -12,6 +12,7 @@
         "process.h": "c",
         "clib.h": "c",
         "syscalls.h": "c",
-        "pipes.h": "c"
+        "pipes.h": "c",
+        "interrupts.h": "c"
     }
 }

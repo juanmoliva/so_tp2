@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <lib.h>
-#include <string.h>
+#include <strings.h>
 #include <process.h>
 #include <memory.h>
 #include <interrupts.h>
@@ -328,7 +328,7 @@ int removeProcess_scheduler( int pid ) {
 
     // el proceso debe dejar de ejecutarse si está corriendo.
     if ( process_list[pid]->status == 'r' ) {
-        process_list_current == NULL;
+        process_list_current = NULL;
         
     }
 
@@ -377,7 +377,7 @@ int update_process_state(int pid, char state) {
     }
     //si es 'b' va a haber que sacarlo de running y ponerlo en una lista de 
     // bloqueados
-    if ( state = 'b' ) {
+    if ( state == 'b' ) {
         if( process_list[pid]->status != 'b' ) {
             // saco proceso de la lista del scheduler.
             // esta funcion maneja el caso de que el proceso se esté ejecutando.
