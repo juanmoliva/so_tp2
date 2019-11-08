@@ -5,7 +5,7 @@
 
 #include <console.h>
 
-#define SYSCALL_COUNT	14
+#define SYSCALL_COUNT	25
 
 // Software handlers functions
 static uint64_t syscall_00 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
@@ -26,6 +26,16 @@ static uint64_t syscall_13 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_14 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_15 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_16 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_17 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_18 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_19 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_20 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_21 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_22 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_23 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_24 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_25 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static int syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 extern void hang(); // Ubicada en loader.asm
 
@@ -33,7 +43,9 @@ uint64_t (* syscalls[]) (uint64_t rdi, uint64_t rsi, uint64_t rdx) = {syscall_00
 																	syscall_04, syscall_05, syscall_06, syscall_07, 
 																	syscall_08, syscall_09, syscall_10, syscall_11, 
 																	syscall_12, syscall_13, syscall_14, syscall_15,
-																	syscall_16};
+																	syscall_16, syscall_17, syscall_18, syscall_19,
+																	syscall_20, syscall_21, syscall_22, syscall_23,
+																	syscall_24, syscall_25, syscall_26};
 
 // Dispatcher for software interrupts
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -139,6 +151,76 @@ uint64_t syscall_16 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	return list_pipes_handler();
+}
+
+int syscall_17 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* Get calling PID
+	*/
+
+	return get_pid_handler();
+}
+
+int syscall_18 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* kill process with rdi PID.
+	*/
+
+	return kill_process_handler((int) rdi);
+}
+
+int syscall_19 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* Init Sem with rdi identifier, rsi initial count
+	*/
+
+	return init_sem_handler((char *) rdi, (int) rsi);
+}
+
+int syscall_20 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* open sem with rdi identifier
+	*/
+
+	return open_sem_handler((char *) rdi);
+}
+
+int syscall_21 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* close sem with rdi identifier.
+	*/
+
+	return close_sem_handler((char *) rdi);
+}
+
+int syscall_22 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* sem_wait with rdi identifier.
+	*/
+
+	return sem_wait_handler((char *) rdi);
+}
+
+int syscall_23 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* sem_post with rdi identifier.
+	*/
+
+	return sem_post_handler((char *) rdi);
+}
+
+int syscall_24 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* create pipe with rdi identifier.
+	*/
+
+	return create_pipe_handler((char *) rdi);
+}
+
+int syscall_25 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* write rsi content on pipe with rdi identifier.
+	*/
+
+	return write_pipe_handler((char *) rdi, (char *) rsi);
+}
+
+int syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* read content on pipe with rdi identifier and store it on rsi string
+	*/
+
+	return read_pipe_handler((char *) rdi, (char *) rsi);
 }
 
 //ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 

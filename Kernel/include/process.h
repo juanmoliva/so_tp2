@@ -26,6 +26,7 @@ int update_process_priority(int pid, int priority);
 int update_process_state(int pid, char state);
 int create_process(int priority, void *rip, char* name);
 int get_pid();
+int kill_process(int pid);
 process_t ** process_list_returner();
 
 

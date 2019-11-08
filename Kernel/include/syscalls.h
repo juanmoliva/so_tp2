@@ -18,7 +18,31 @@ uint64_t memory_state_handler(uint8_t free);
 uint64_t create_process_handler(void *rip, int priority, char *name);
 uint64_t update_process_priority_handler(int pid, int priority);
 uint64_t update_process_state_handler(int pid, char state);
-uint64_t list_processes_handler();
+char *list_processes_handler();
+
+uint64_t list_sem_handler();
+
+uint64_t list_pipes_handler();
+
+int get_pid_handler();
+
+int kill_process_handler(int pid);
+
+int init_sem_handler(char *identifier, int count);
+
+int open_sem_handler(char *identifier);
+
+int close_sem_handler(char *identifier);
+
+int sem_wait_handler(char *identifier);
+
+int sem_post_handler(char *identifier);
+
+int create_pipe_handler(char *identifier);
+
+int write_pipe_handler(char *identifier, char *str);
+
+int read_pipe_handler(char *identifieri, char *buff);
 
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 

@@ -462,7 +462,6 @@ char **list_processes() {
         return processes;
     }
     while(temp != NULL){
-        processes
         temp = temp->next;
     }
 

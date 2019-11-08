@@ -11,6 +11,7 @@
         "synchro.h": "c",
         "process.h": "c",
         "clib.h": "c",
-        "syscalls.h": "c"
+        "syscalls.h": "c",
+        "pipes.h": "c"
     }
 }

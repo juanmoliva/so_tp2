@@ -10,6 +10,8 @@
 #include <process.h>
 #include <videoDriver.h>
 #include <strings.h>
+#include <pipes.h>
+#include <synchro.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count) {
     // File descriptor doesn't matter
@@ -130,6 +132,46 @@ uint64_t list_sem_handler() {
 uint64_t list_pipes_handler() {
     // return list_processes();
     return 0;
+}
+
+int get_pid_handler() {
+    return get_pid();
+}
+
+int kill_process_handler(int pid) {
+    return kill_process(pid);
+}
+
+int init_sem_handler(char *identifier, int count) {
+    return sem_init(identifier, count);
+}
+
+int open_sem_handler(char *identifier) {
+    return sem_open(identifier);
+}
+
+int close_sem_handler(char *identifier) {
+    return sem_close(identifier);
+}
+
+int sem_wait_handler(char *identifier) {
+    return sem_wait(identifier);
+}
+
+int sem_post_handler(char *identifier) {
+    return sem_post(identifier);
+}
+
+int create_pipe_handler(char *identifier) {
+    return create_pipe(identifier);
+}
+
+int write_pipe_handler(char *identifier, char *str) {
+    return write_pipe(identifier, str);
+}
+
+int read_pipe_handler(char *identifier, char *buff) {
+    return read_pipe(identifier, buff);
 }
 
 // Done:
