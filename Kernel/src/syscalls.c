@@ -108,21 +108,20 @@ uint64_t update_process_state_handler(int pid, char state) {
 /// tp2
 
 char* list_processes_handler() {
-    //ESTO DEBERIA ESTAR EN UNA FUNCION EN PROCESS.C
     char ps[500]; 
     int j = 0;
     process_t ** list = process_list_returner();
      for (int i = 0; i < MAX_PID; i++)
         {
             if(list[i]!= NULL){
-                ps[j++] = int_to_string(i, 0 ,10);
+               // ps[j++] = int_to_string(i,  ,10);
+                int_to_string(i, &ps[j++] ,10);
             }
-        ps[j++] = "-1";
+       int_to_string(-1, &ps[j++] ,10);
         }
     
     return ps;
 }
-
 
 uint64_t list_sem_handler() {
     // return 

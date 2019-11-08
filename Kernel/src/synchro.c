@@ -1,6 +1,6 @@
 #include <lib.h>
 #include <process.h>
-#include <string.h>
+#include <strings.h>
 #include <synchro.h>
 #include <memory.h>
 
