@@ -293,3 +293,14 @@ void loop_funtcion(){
      syscall(LOOP,0,0,0);
      puts("ANISMANLOMATARON");
 }
+
+
+output(char *str, char* pipe) {
+   if(!strcmp(pipe,STD_OUT)) {
+       // std_out
+       puts(str);
+   }
+   else {
+      write_pipe(pipe);
+   }
+}

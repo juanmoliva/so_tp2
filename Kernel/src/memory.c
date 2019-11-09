@@ -10,7 +10,7 @@ static void * end_memsegment = (void*)0x1500000;
 
 
 
-static node_t *first = (node_t *) 0x1000000;
+node_mem_t *first_mem_node = (node_mem_t *)0x1000000;
 
 /*
     2^20 bytes de memoria.
@@ -26,10 +26,10 @@ static node_t *first = (node_t *) 0x1000000;
 
 //Aca inicializamos el Memory Manager
 void init_mm() {
-    first->free = 1;
-    first->next = NULL;
-    first->startAddr = start_memsegment;
-    first->blocks = (int) (end_memsegment - start_memsegment) / BLOCKSIZE;
+    first_mem_node->free = 1;
+    first_mem_node->next = NULL;
+    first_mem_node->startAddr = start_memsegment;
+    first_mem_node->blocks = (int) (end_memsegment - start_memsegment) / BLOCKSIZE;
 }
 
 //Aca alocamos los bytes que nos pide el usuario
@@ -38,10 +38,10 @@ void *allocate_blocks(int bytes) {
     // si da justo entero se rompe.
 /////////////////////////////////////////////////////////////////////////////////////////////
     //Aca calculamos cant de pags
-    unsigned long needed_blocks = ( bytes + sizeof(node_t) / 0x40 ) + 1; 
+    unsigned long needed_blocks = ( bytes + sizeof(node_mem_t) / 0x40 ) + 1; 
 
     //Preparo un puntero para iterar
-    node_t *current = first;
+    node_mem_t *current = first_mem_node;
 
     //itero hasta encontrar el que sirve o se me acabo la lista
     while( current != NULL ) {
@@ -59,7 +59,7 @@ void *allocate_blocks(int bytes) {
     }
     // creamos un puntero al a la direccion correspondiente + tam requerido y metemos un nuevo nodo 
     else {
-        node_t *aux = current->startAddr + needed_blocks*BLOCKSIZE;
+        node_mem_t *aux = current->startAddr + needed_blocks*BLOCKSIZE;
         
         
         aux->next = current->next;
@@ -72,7 +72,7 @@ void *allocate_blocks(int bytes) {
         current->next = aux->startAddr;
 
 
-        return (void *)(current->startAddr + sizeof(node_t));
+        return (void *)(current->startAddr + sizeof(node_mem_t));
     }
 }
 
@@ -80,11 +80,11 @@ int free_block(void *address) {
     // Si el bloque de memoria al que pertenece address fue asignado previamente, se "libera".
     // sino, no se hace nada.
 
-    node_t *current = first;
+    node_mem_t *current = first_mem_node;
 
     //Recorro todo hasta encontrar el lugar que me pasaron
     while ( current != NULL ) {
-        if ( (void *)(current->startAddr + sizeof(node_t)) == address )
+        if ( (void *)(current->startAddr + sizeof(node_mem_t)) == address )
         {
             break;
         }
@@ -111,7 +111,7 @@ int cur_free_mem() {
     // devuelve la cantidad de memoria libre que hay.
 
     // Voy a tomar el first y recorrer todo sumando los free blocks
-    node_t *current = first;
+    node_mem_t *current = first_mem_node;
     unsigned long freeBlocks = 0;
 
     while (current != NULL)

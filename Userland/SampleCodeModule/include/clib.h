@@ -15,6 +15,9 @@
 #define TIME_SEP    ':'
 #define NULL 0
 
+#define STD_IN "std_in"
+#define STD_OUT "std_out"
+
 // definition of structures
 
 typedef struct p_blocked{
@@ -57,7 +60,7 @@ void beep(uint32_t frequency, uint64_t millis);
 void exit();
 uint64_t getTicks();
 void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
-void printMemState();
+void print_memstate();
 int free(void *addr);
 void *malloc(unsigned long bytes);
 void printSTDIN(); // no implementado
@@ -71,7 +74,7 @@ uint64_t kill_process(int pid);
 void block_process (int pid);
 void filter_input ();
 void nice (int pid, int priority);
-void loop_funtcion();
+void loop_function();
 
 
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);

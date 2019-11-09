@@ -209,7 +209,7 @@ int block_process_handler(int pid){
     return update_process_state(pid,'b');
 }
 
-void nice_handler(int pid, int priority){
+int nice_handler(int pid, int priority){
 
     int result = update_process_priority(pid, priority);
     if (result == -1){
@@ -220,7 +220,10 @@ void nice_handler(int pid, int priority){
     }
     else {
         // puts("Prioridad cambiada con exito");
+        
     }
+    return result;
+
 }
 
 void loop_handler(){

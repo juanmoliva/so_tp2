@@ -3,12 +3,12 @@
 
 #include <stdint.h>
 
-typedef struct node {
+typedef struct node_mem {
     unsigned char free;
     unsigned long blocks;
     void *startAddr;
-    struct node * next;
-} node_t;
+    struct node_mem * next;
+} node_mem_t;
 
 void *allocate_blocks(int bytes);
 int free_block(void *address);

@@ -32,7 +32,7 @@ int create_pipe_handler(char *identifier);
 int write_pipe_handler(char *identifier, char *str);
 int read_pipe_handler(char *identifieri, char *buff);
 int block_process_handler(int pid);
-void nice_handler(int pid, int priority);
+int nice_handler(int pid, int priority);
 void loop_handler();
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 

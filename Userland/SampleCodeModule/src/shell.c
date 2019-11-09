@@ -13,8 +13,7 @@ void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, 
 static char * pipes_strings[] = {"pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"};
 #define MAX_LENGTH  50
 #define MEM_ADDRESS (void *)0x600000
-#define STD_IN "std_in"
-#define STD_OUT "std_out"
+
 
 static void newLine(){
     putchar('\n');
@@ -44,18 +43,17 @@ void initShell() {
                 //corre normal
                 command_only = 1;
                 break;
-            }
-            else {
+            } else {
                 break;
             }
         }
 
         // char_read = 2 porque ps tiene longitud dos
-        // ahora nos fijamos que hay en el indice char_read+1 (que hay despues del espacio)
+        // ahora nos fijamos que hay en el indice char_read (que hay despues del espacio)
 
         //Aca cae solo si NO es un comando solo, es decir, tiene otro cosa dps de un PIPE
         if ( !command_only ) { 
-            if ( input[char_read] == '|') {
+            if ( input[char_read] == '#') {
                 // pipe
                 // crear pipe  --> 
                 // int pipe_result = create_pipe()
@@ -96,12 +94,6 @@ void initShell() {
 }
 void initScreen() {
     clearScreen();   
-}
-int readUntilSpace(char *input) {
-    // lee input hasta el espacio y devuelve la cantidad de chars que se leyeron
-}
-int readAfterCommand(char *input, int index) {
-    // lee input + index y se fija lo que hay despues (del comando)
 }
 int getCommand(char * input){
     for (int i = 0; i < command_count; i++) {
@@ -211,6 +203,9 @@ void filter_cmd(){
 }
 void wc_cmd(){
 }
+
+void ps_cmd(){
+}
 void cat_cmd(){
     printSTDIN();
 }
@@ -223,7 +218,6 @@ void kill_cmd(int id){
     kill_process(id);
 }
 void loop_cmd(){
-    loop_function();
 }
 void nice_cmd(int pid, int priority){
     nice(pid, priority);
@@ -234,16 +228,3 @@ void mem_cmd(){
   print_memstate();
 }
 
-
-// output( "hola", STD_OUT ){ 
-
-// }
-// output(char *str, char* pipe) {
-//    if(!strcmp(pipe,STD_OUT)) {
-//        // std_out
-//        puts(str);
-//    }
-//    else {
-//        write_pipe(pipe);
-//    }
-// }

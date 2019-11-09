@@ -247,7 +247,7 @@ uint64_t syscall_27 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
 	*/
 
-	return (uint64_t) block_process_handler((char *) rdi, (char *) rsi);
+	return (uint64_t) block_process_handler(rdi);
 }
 uint64_t syscall_28 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
@@ -260,7 +260,9 @@ uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
 	*/
 
-	return (uint64_t) loop_handler();
+	loop_handler();
+
+	return 0;
 	
 }
 //ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 
