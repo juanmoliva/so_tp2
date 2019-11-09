@@ -3,6 +3,9 @@
 
 #include <process.h>
 
+
+#define MAX_SEM 100
+
 typedef struct p_blocked{
     int pid;
     struct p_blocked * next;
@@ -12,7 +15,7 @@ typedef struct p_blocked{
 
 //Creo la struct de semaforos
 typedef struct sem {
-    const char *identifier;
+    int identifier;
     int counter;
     struct sem* next;
     //lista de procesos bloqueados en un semaforo
@@ -21,11 +24,11 @@ typedef struct sem {
 } sem_t;
 
 
-int sem_init(const char *, int initial_count );
-sem_t *sem_open(const char *str);
-int sem_wait(const char *identifier );
-int sem_post(const char *identifier ); 
+int sem_init(int id, int initial_count );
+sem_t *sem_open(int id);
+int sem_wait(int id);
+int sem_post(int id); 
 void sem_list();
-int sem_close(const char *identifier);
+int sem_close(int id);
 
 #endif

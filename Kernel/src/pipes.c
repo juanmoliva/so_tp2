@@ -10,16 +10,7 @@
 // Le asigna el pipe a un proceso para que pueda leer o escribir
 // 
 
-typedef struct pipe {
-    const char *identifier;
-    // sem_t * read_sem;
-    // sem_t * write_sem;
-    sem_t * global_sem;
-    //Region donde se va a escribir
-    void * critical_region;
 
-    struct pipe * next;
-} pipe_t;
 
 pipe_t * first = NULL;
 
@@ -109,4 +100,9 @@ int read_pipe(const char *identifier, char *destination) { //Aca lo podemos hace
     }
     
     return 0;
+}
+
+
+pipe_t * list_pipes(){
+    return first;
 }

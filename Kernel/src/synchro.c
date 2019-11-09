@@ -16,7 +16,9 @@
 sem_t *first_sem = NULL;
 
 // crear un nuevo semaforo
-int sem_init(const char *str, int initial_count ) {
+
+//const char *str lo paso a INT
+int sem_init(int id, int initial_count ) {
     // fijarnos que identificador no se haya usado 
     
     sem_t  * sem;
@@ -34,7 +36,7 @@ int sem_init(const char *str, int initial_count ) {
         sem = sem->next;
     }
 
-    sem->identifier = str;
+    sem->identifier = id;
     sem->counter = initial_count;
     sem->blocked_processes = NULL;
     sem->next = NULL;
@@ -43,19 +45,22 @@ int sem_init(const char *str, int initial_count ) {
 }
 
 //Buscar el semaforo con el ID = identifier
-sem_t *sem_open(const char* str) {
+sem_t *sem_open(int id) {
     //busco el semaforo en la lista
     sem_t *current = first_sem;
-    while( current != NULL && strcmp(current->identifier,str)) { 
+    
+    // while( current != NULL && strcmp(current->identifier,str)) { 
+    //     current = current->next;
+    // }
+    while( current != NULL && current->identifier != id ) { 
         current = current->next;
     }
-
     // si es NULL no se encontró el semaforo.
     return current;
 }
 
-int sem_wait(const char *identifier) {
-    sem_t *sem = sem_open(identifier);
+int sem_wait(int id) {
+    sem_t *sem = sem_open(id);
     // si sem es null, el identificador es invalido.
     if (sem == NULL) {
         return 1;
@@ -132,8 +137,8 @@ int sem_wait(const char *identifier) {
     return 0;
 }
 
-int sem_post( const char *identifier ) {
-    sem_t *sem = sem_open(identifier);
+int sem_post( int id ) {
+    sem_t *sem = sem_open(id);
     // si sem es null, el identificador es invalido.
     if (sem == NULL) {
         return 1;
@@ -162,11 +167,11 @@ int sem_post( const char *identifier ) {
 }
 
 //Aca cerramos un semaforo. Liberamos la memoria y lo sacamos de la lista
-int sem_close(const char *identifier) {
+int sem_close(int id) {
     //Lo saco de la lista
     sem_t * prev_current;
     sem_t * current = first_sem;
-    while (current != NULL && strcmp(current->identifier,identifier))
+    while (current != NULL && strcmp(current->identifier,id))
     {
         prev_current = current;
         current = current->next;
@@ -185,14 +190,7 @@ int sem_close(const char *identifier) {
     }
 }
 
-//Aca mostramos la lista de todos los semaforos actuales -----------------------------------------------------
-void sem_list() {
-    //Recorro e imprimo
-    sem_t * current = first_sem;
-    while (current != NULL)
-    {
-        //PRINT
-        current = current->next;
-    }
-    return;
+//Aca devolvemos la lista de todos los semaforos actuales y su info -----------------------------------------------------
+sem_t * sem_list() {
+    return first_sem;
 }

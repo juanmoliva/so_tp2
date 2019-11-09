@@ -119,20 +119,17 @@ char* list_processes_handler() {
             }
        int_to_string(-1, &ps[j++] ,10);
         }
+    ps[j]= "endofdtring";
     
     return ps;
 }
 
-uint64_t list_sem_handler() {
-    // return 
-    return 0;
-}
 
+////PIPES
 uint64_t list_pipes_handler() {
-    // return list_processes();
-    return 0;
+    return list_pipes();
 }
-
+////////////
 int get_pid_handler() {
     return get_pid();
 }
@@ -141,25 +138,60 @@ int kill_process_handler(int pid) {
     return kill_process(pid);
 }
 
-int init_sem_handler(char *identifier, int count) {
+
+
+// SEMAFOROS
+
+sem_t * list_sem_handler() {
+    return sem_list();
+}
+
+// int init_sem_handler(char *identifier, int count) {
+//     return sem_init(identifier, count);
+// }
+
+// int open_sem_handler(char *identifier) {
+//     return sem_open(identifier);
+// }
+
+// int close_sem_handler(char *identifier) {
+//     return sem_close(identifier);
+// }
+
+// int sem_wait_handler(char *identifier) {
+//     return sem_wait(identifier);
+// }
+
+// int sem_post_handler(char *identifier) {
+//     return sem_post(identifier);
+// }
+
+int init_sem_handler(int identifier, int count) {
     return sem_init(identifier, count);
 }
 
-int open_sem_handler(char *identifier) {
+int open_sem_handler(int identifier) {
     return sem_open(identifier);
 }
 
-int close_sem_handler(char *identifier) {
+int close_sem_handler(int identifier) {
     return sem_close(identifier);
 }
 
-int sem_wait_handler(char *identifier) {
+int sem_wait_handler(int identifier) {
     return sem_wait(identifier);
 }
 
-int sem_post_handler(char *identifier) {
+int sem_post_handler(int identifier) {
     return sem_post(identifier);
 }
+
+///////////////////////////////////////////////////
+
+
+
+
+
 
 int create_pipe_handler(char *identifier) {
     return create_pipe(identifier);
@@ -173,14 +205,53 @@ int read_pipe_handler(char *identifier, char *buff) {
     return read_pipe(identifier, buff);
 }
 
+int block_process_handler(int pid){
+    return update_process_state(pid,'b');
+}
+
+void nice_handler(int pid, int priority){
+
+    int result = update_process_priority(pid, priority);
+    if (result == -1){
+        puts("Pid invalido")
+    }
+    else if ( result == -2){
+        puts("prioridad invalida, pruebe con numeros enteros positivos menores o iguales a 10");
+    }
+    else {
+        puts("Prioridad cambiada con exito");
+    }
+}
+
+void loop_handler(){
+    int mypid = getpid();
+    every_n_second_procecess(mypid);
+}
+
+//Done & Tested:
+
 // Done:
 // ● help:​ muestra una lista con todos los comandos disponibles
-// ● kill: ​Mata un proceso dado su ID.
-
-// Almost Done:
 // ● mem: ​Imprime el estado de la memoria.
+
+//by juli
+// ● kill: ​Mata un proceso dado su ID.
+// ● sem: Imprime la lista de todos los semáforos con sus propiedades: estado, los
+// procesos bloqueados en cada uno y cualquier otra variable que consideren
+// necesaria.
+// ● pipe: Imprime la lista de todos los pipes con sus propiedades: estado, los procesos
+// bloqueados en cada uno y cualquier otra variable que consideren necesaria.
+
+
+//by davor
 // ● nice:​ Cambia la prioridad de un proceso dado su ID y la nueva prioridad.
 // ● block:​ Cambia el estado de un proceso entre ​bloqueado ​y ​listo​ dado su ID.
+// ● ps: ​Imprime la lista de todos los procesos con sus propiedades: nombre, ID,
+// prioridad, stack y base pointer, foreground y cualquier otra variable que consideren
+// necesaria.
+// ● loop:​ Imprime su ID con un saludo cada una determinada cantidad de segundos.
+
+
 
 
 // A ESTO LE FALTA RECIBIR MAS DE UN PARAMETRO!!!!!!!!
@@ -193,23 +264,9 @@ int read_pipe_handler(char *identifier, char *buff) {
 //por ejemplo, bash hace esto al agregar el símbolo “|” entre los 2 programas a ejecutar.
 
 // Missing:
-
-//EASY (Algunos casi hechos)
-
-// ● sem: Imprime la lista de todos los semáforos con sus propiedades: estado, los
-// procesos bloqueados en cada uno y cualquier otra variable que consideren
-// necesaria.
-// ● pipe: Imprime la lista de todos los pipes con sus propiedades: estado, los procesos
-// bloqueados en cada uno y cualquier otra variable que consideren necesaria.
-
-//HARD
 // ● cat: ​Imprime el stdin tal como lo recibe.
-// ● wc: ​Cuenta la cantidad de líneas del input.
+// ● wc: ​Cuenta la cantidad de líneas del input.(((CANTIDA DE /n's)))
 // ● filter​: Filtra las vocales del input.
-// ● ps: ​Imprime la lista de todos los procesos con sus propiedades: nombre, ID,
-// prioridad, stack y base pointer, foreground y cualquier otra variable que consideren
-// necesaria.
-// ● loop:​ Imprime su ID con un saludo cada una determinada cantidad de segundos.
 
 //VERY HARD
 // ● phylo: Implementa el problema de los filósofos comensales. ​

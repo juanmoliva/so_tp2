@@ -19,7 +19,13 @@
 #define UPDATE_PROCESS_PRIORITY 12
 #define UPDATE_PROCESS_STATE 13
 #define LIST_PROCESSES 14
+#define LIST_SEM 15
+#define LIST_PIPES 16
 #define KILL_PROCESS 18
+#define BLOCK_PROCESS 27
+#define NICE 28
+#define NICE 29
+
 
 #define STDIN       0
 #define STDOUT      1
@@ -160,7 +166,7 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     uint64_t rgb = getRGB(r, g, b);
     syscall(PIXEL_ID, x, y, rgb);
 }
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////// tp2_so
 void *malloc(unsigned long bytes) {
     return (void *)syscall(MEMORY_ALLOC_ID, 0 ,bytes, 0);
 }
@@ -177,6 +183,10 @@ void print_memstate() {
     puts("Memoria libre disponible: ");
     printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
     puts("\n");
+}
+
+void printSTDIN(){
+    //IMPRIMIR EXACTAMENTE LO QUE RECIBE
 }
 
 int new_process(int priority,void *rip, const char *name) {
@@ -196,14 +206,90 @@ uint64_t list_processes() {
 }
 
 uint64_t list_sem() {
-    return syscall(LIST_PROCESSES, 0 ,0, 0);
-}
-uint64_t list_pipes() {
-    return syscall(LIST_PROCESSES, 0 ,0, 0);
+    uint64_t temp = syscall(LIST_SEM, 0 ,0, 0);
+    if(temp == NULL){
+        puts("No Sem Yet.");
+        return 0;
+    }
+    uint64_t blocked_p = temp->blocked_processes;
+    int flag = 0;
+    while(temp != NULL){
+        flag = 0;
+        puts("Sem ");
+            printf("%d", temp->id);
+            puts(" contains this blocked processes:");
+            puts("/n");
+        while(blocked_p != NULL){
+            flag = 1;
+            puts("Process ")
+            printf("%d", blocked_p->pid);
+            puts("/n");
+        }
+        if(!flag){
+            puts("None");
+        }
+    }
+    return 0;
 }
 
-uint64_t kill_process(int pid) {
+uint64_t list_pipes() {
+    uint64_t aux = syscall(LIST_PIPES, 0 ,0, 0);
+    if(aux == NULL){
+        puts("No Pipes Yet.");
+        return 0;
+    }
+    uint64_t temp = aux->global_sem;
+    uint64_t blocked_p = temp->blocked_processes;
+    int flag = 0;
+    while(aux != NULL){
+        puts("Pipe ");
+        printf("%d", aux->identifier);
+        puts("contains this sem:");
+        puts("/n");
+        while(temp != NULL){
+            flag = 0;
+            puts("Sem ");
+            printf("%d", temp->id);
+            puts(" contains this blocked processes:");
+            puts("/n");
+            while(blocked_p != NULL){
+                flag = 1;
+                puts("Process ")
+                printf("%d", blocked_p->pid);
+                puts("/n");
+            }
+            if(!flag){
+                puts("None");
+            }
+        }
+    }
+    return 0;
+
+}
+
+uint64_t kill_process(int pid) { /////////////////////////////////////////PROBAR
     return syscall(KILL_PROCESS, pid,0, 0);
 }
 
-uint64_t create_
+void block_process (int pid){ ////////////////////////////////////////////CAMBIAR PUTS POR OUTPUT MAYBE
+    int result =  syscall (BLOCK_PROCESS, pid, 0, 0);
+    if(result == -1){
+        puts=("No existe funcion con tal pid");
+    } 
+    else{
+        puts=("Bloqueado con exito");
+    }
+}
+
+void filter_input (){
+
+}
+
+void nice (int pid, int priority){
+     syscall(NICE, pid, priority, 0);
+}
+
+void loop_funtcion(){
+     syscall(LOOP,0,0,0);
+     puts("ANISMANLOMATARON");
+}

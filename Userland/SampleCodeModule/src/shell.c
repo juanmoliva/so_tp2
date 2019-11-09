@@ -109,7 +109,6 @@ int readUntilSpace(char *input) {
 
 int readAfterCommand(char *input, int index) {
     // lee input + index y se fija lo que hay despues (del comando)
-
 }
 
 int getCommand(char * input){
@@ -213,29 +212,36 @@ void exit_cmd() {
 
 ////////// tp2_so
 
-void ps_cmd(){
-    list_processes();
+void ps_cmd(){  //// FALOPA , FALTA RETOCAR PERO EN PRINCIPIO MASOMENOS VA 
+   char** to_print = list_processes();
+   while (to_print** != "enofstring"){
+       puts(to_print**);
+       char to_print++;
+   }
 }
 
-void sem_cmd(){ list_sem();
+void sem_cmd(){ 
+    list_sem();
 }
 
 void pipe_cmd(){list_pipes();
 }
 
 void filter_cmd(){
+    filter_input();
 }
 
 void wc_cmd(){
 }
 
 void cat_cmd(){
+    printSTDIN();
 }
 
 void block_cmd(int pid){
     // USE CASE: block 34 ---> bloquea el proceso de pid 34
-    //Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
-    
+    // Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
+    block_process(pid);
 }
 
 void kill_cmd(int id){
@@ -243,18 +249,18 @@ void kill_cmd(int id){
 }
 
 void loop_cmd(){
+    loop_function();
 }
 
-void nice_cmd(){
+void nice_cmd(int pid, int priority){
+    nice(pid, priority);
 }
 
 void phylo_cmd(){
 }
 
 void mem_cmd(){
-  
   print_memstate();
-
 }
 
 

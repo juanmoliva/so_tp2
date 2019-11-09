@@ -19,15 +19,22 @@ typedef struct node {
     struct node *next;
 } node_t;
 
+typedef struct sleepingp{
+    int tt;
+    int ppid;
+    struct sleepingp *next;
+}sleeping_t
+
 void init_process_list();
 int init_scheduler();
 void *schedule(void *prev_rsp);
 int update_process_priority(int pid, int priority);
 int update_process_state(int pid, char state);
 int create_process(int priority, void *rip, char* name);
-int get_pid();
+int get_pid(); // del running
 int kill_process(int pid);
 process_t ** process_list_returner();
+int get_running_pid();
 
 
 

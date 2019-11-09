@@ -36,6 +36,11 @@ static uint64_t syscall_23 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_24 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_25 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_27 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_28 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+
+
 
 extern void hang(); // Ubicada en loader.asm
 
@@ -140,7 +145,7 @@ uint64_t syscall_14 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 }
 
 uint64_t syscall_15 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-	/* List Sem 
+	/* LIST SEM 
 	*/
 
 	return list_sem_handler();
@@ -167,40 +172,55 @@ uint64_t syscall_18 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	return kill_process_handler((int) rdi);
 }
 
+
+
+///SEMAFOROS//////////////////////////////////////////////////
+//Puse los identifiers con INT porque sino dps me va a quedar el PID de los procesos y el PID de los semaforos en dos tipos distintos
 uint64_t syscall_19 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* Init Sem with rdi identifier, rsi initial count
 	*/
 
-	return init_sem_handler((char *) rdi, (int) rsi);
+	//return init_sem_handler((char *) rdi, (int) rsi);
+	return init_sem_handler((int) rdi, (int) rsi);
 }
 
 uint64_t syscall_20 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* open sem with rdi identifier
 	*/
 
-	return open_sem_handler((char *) rdi);
+	//return open_sem_handler((char *) rdi);
+	return open_sem_handler((int) rdi);
 }
 
 uint64_t syscall_21 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* close sem with rdi identifier.
 	*/
 
-	return close_sem_handler((char *) rdi);
+	//return close_sem_handler((char *) rdi);
+	return close_sem_handler((int) rdi);
 }
 
 uint64_t syscall_22 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* sem_wait with rdi identifier.
 	*/
 
-	return sem_wait_handler((char *) rdi);
+	//return sem_wait_handler((char *) rdi);
+	return sem_wait_handler((int) rdi);
 }
 
 uint64_t syscall_23 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* sem_post with rdi identifier.
 	*/
 
-	return sem_post_handler((char *) rdi);
+	//return sem_post_handler((char *) rdi);
+	return sem_post_handler((int) rdi);
 }
+
+////////////////////////////////////////////////////////
+
+
+
+
 
 uint64_t syscall_24 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* create pipe with rdi identifier.
@@ -223,5 +243,25 @@ uint64_t syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	return read_pipe_handler((char *) rdi, (char *) rsi);
 }
 
+uint64_t syscall_27 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* write rsi content on pipe with rdi identifier.
+	*/
+
+	return block_process_handler((char *) rdi, (char *) rsi);
+}
+uint64_t syscall_28 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* write rsi content on pipe with rdi identifier.
+	*/
+
+	return nice_handler((int) rdi, (int) rsi, );
+}
+
+uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* write rsi content on pipe with rdi identifier.
+	*/
+
+	return loop_handler();
+	
+}
 //ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 
 //PORQUE ESTO ES LO QUE LLAMA EL CHABON!!!!!!! DPS DE ESTO SE PASA A SYSCALLS.c Y DPS A PROCESS.C
