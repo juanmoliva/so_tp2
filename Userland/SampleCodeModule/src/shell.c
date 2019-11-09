@@ -10,7 +10,7 @@ static int command_count = 21;
 void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
                                       ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
-static char * pipes_strings[] = {"pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"}
+static char * pipes_strings[] = {"pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"};
 #define MAX_LENGTH  50
 #define MEM_ADDRESS (void *)0x600000
 #define STD_IN "std_in"
@@ -59,7 +59,7 @@ void initShell() {
             if ( input[char_read] == '|') {
                 // pipe
                 // crear pipe  --> 
-                int pipe_result = create_pipe()
+                // int pipe_result = create_pipe()
 
                 
             } else if ( input[char_read] == '&' ){
@@ -212,13 +212,13 @@ void exit_cmd() {
 
 ////////// tp2_so
 
-void ps_cmd(){  //// FALOPA , FALTA RETOCAR PERO EN PRINCIPIO MASOMENOS VA 
+/* void ps_cmd(){  //// FALOPA , FALTA RETOCAR PERO EN PRINCIPIO MASOMENOS VA 
    char** to_print = list_processes();
    while (to_print** != "enofstring"){
        puts(to_print**);
        char to_print++;
    }
-}
+} */
 
 void sem_cmd(){ 
     list_sem();

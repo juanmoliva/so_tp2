@@ -13,6 +13,35 @@
 
 #define DATE_SEP    '-'
 #define TIME_SEP    ':'
+#define NULL 0
+
+// definition of structures
+
+typedef struct p_blocked{
+    int pid;
+    struct p_blocked * next;
+    
+} p_blocked_t;
+
+typedef struct sem {
+    int identifier;
+    int counter;
+    struct sem* next;
+    //lista de procesos bloqueados en un semaforo
+    p_blocked_t * blocked_processes;
+    
+} sem_t;
+
+typedef struct pipe {
+    const char *identifier;
+    // sem_t * read_sem;
+    // sem_t * write_sem;
+    sem_t * global_sem;
+    //Region donde se va a escribir
+    void * critical_region;
+
+    struct pipe * next;
+} pipe_t;
 
 void puts(const char * string);
 void perror(const char * string);

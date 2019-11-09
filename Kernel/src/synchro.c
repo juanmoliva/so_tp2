@@ -130,7 +130,7 @@ int sem_wait(int id) {
 
         // cuando retoma la ejecucion, sem->counter va a estar en 1.        
     }
-    if (sem_down >= 1) {
+    if (sem->counter >= 1) {
         sem_down( &sem->counter );
     }
 

@@ -23,7 +23,7 @@ typedef struct sleepingp{
     int tt;
     int ppid;
     struct sleepingp *next;
-}sleeping_t
+}sleeping_t;
 
 void init_process_list();
 int init_scheduler();
@@ -35,6 +35,8 @@ int get_pid(); // del running
 int kill_process(int pid);
 process_t ** process_list_returner();
 int get_running_pid();
+void check_sleepers();
+int every_n_seconds_procecess(int pid);
 
 
 

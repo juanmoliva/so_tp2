@@ -36,7 +36,14 @@ int create_pipe(const char *identifier) {
     pipe->identifier = identifier;
     // pipe->read_sem = sem_init(5*identifier, 0);
     // pipe->write_sem = sem_init(3*identifier, 1);
-    pipe->global_sem = sem_init(identifier, 1);
+    int semInit = sem_init(identifier, 1);
+    if(!semInit) {
+        return 1;
+    }
+    pipe->global_sem = sem_open(identifier);
+    if ( pipe->global_sem == NULL ) {
+        return 2;
+    }
     pipe->critical_region = malloc(CRIT_REGION_SIZE);
     pipe->next = NULL;
 
@@ -63,7 +70,7 @@ int write_pipe(const char *identifier,const char *str) {
         
         //Aca estoy habilitado a escribir
         // usamos memcpy de lib.c y strlen de strings.c
-        memcpy(current->critical_region, str , strlen(str) );
+        memcpy(current->critical_region, str , (char *) strlen(str) );
         
         sem_post(current->global_sem->identifier);
         //sem_post(current->write_sem->identifier);

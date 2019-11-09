@@ -148,28 +148,28 @@ uint64_t syscall_15 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* LIST SEM 
 	*/
 
-	return list_sem_handler();
+	return (uint64_t) list_sem_handler();
 }
 
 uint64_t syscall_16 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* List Pipes
 	*/
 
-	return list_pipes_handler();
+	return (uint64_t) list_pipes_handler();
 }
 
 uint64_t syscall_17 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* Get calling PID
 	*/
 
-	return get_pid_handler();
+	return (uint64_t)  get_pid_handler();
 }
 
 uint64_t syscall_18 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* kill process with rdi PID.
 	*/
 
-	return kill_process_handler((int) rdi);
+	return (uint64_t) kill_process_handler((int) rdi);
 }
 
 
@@ -181,7 +181,7 @@ uint64_t syscall_19 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	//return init_sem_handler((char *) rdi, (int) rsi);
-	return init_sem_handler((int) rdi, (int) rsi);
+	return (uint64_t) init_sem_handler((int) rdi, (int) rsi);
 }
 
 uint64_t syscall_20 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -189,7 +189,7 @@ uint64_t syscall_20 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	//return open_sem_handler((char *) rdi);
-	return open_sem_handler((int) rdi);
+	return (uint64_t) open_sem_handler((int) rdi);
 }
 
 uint64_t syscall_21 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -197,7 +197,7 @@ uint64_t syscall_21 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	//return close_sem_handler((char *) rdi);
-	return close_sem_handler((int) rdi);
+	return (uint64_t) close_sem_handler((int) rdi);
 }
 
 uint64_t syscall_22 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -205,7 +205,7 @@ uint64_t syscall_22 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	//return sem_wait_handler((char *) rdi);
-	return sem_wait_handler((int) rdi);
+	return (uint64_t) sem_wait_handler((int) rdi);
 }
 
 uint64_t syscall_23 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -213,7 +213,7 @@ uint64_t syscall_23 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	//return sem_post_handler((char *) rdi);
-	return sem_post_handler((int) rdi);
+	return (uint64_t) sem_post_handler((int) rdi);
 }
 
 ////////////////////////////////////////////////////////
@@ -226,41 +226,41 @@ uint64_t syscall_24 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* create pipe with rdi identifier.
 	*/
 
-	return create_pipe_handler((char *) rdi);
+	return (uint64_t) create_pipe_handler((char *) rdi);
 }
 
 uint64_t syscall_25 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
 	*/
 
-	return write_pipe_handler((char *) rdi, (char *) rsi);
+	return (uint64_t) write_pipe_handler((char *) rdi, (char *) rsi);
 }
 
 uint64_t syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* read content on pipe with rdi identifier and store it on rsi string
 	*/
 
-	return read_pipe_handler((char *) rdi, (char *) rsi);
+	return (uint64_t) read_pipe_handler((char *) rdi, (char *) rsi);
 }
 
 uint64_t syscall_27 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
 	*/
 
-	return block_process_handler((char *) rdi, (char *) rsi);
+	return (uint64_t) block_process_handler((char *) rdi, (char *) rsi);
 }
 uint64_t syscall_28 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
 	*/
 
-	return nice_handler((int) rdi, (int) rsi, );
+	return (uint64_t) nice_handler((int) rdi, (int) rsi );
 }
 
 uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* write rsi content on pipe with rdi identifier.
 	*/
 
-	return loop_handler();
+	return (uint64_t) loop_handler();
 	
 }
 //ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <lib.h>
+#include <synchro.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count);
 void write_handler(uint64_t fd, const char * buff, uint64_t count);
@@ -20,7 +21,7 @@ uint64_t update_process_priority_handler(int pid, int priority);
 uint64_t update_process_state_handler(int pid, char state);
 char *list_processes_handler();
 
-uint64_t list_sem_handler();
+sem_t *list_sem_handler();
 
 uint64_t list_pipes_handler();
 
@@ -28,15 +29,15 @@ int get_pid_handler();
 
 int kill_process_handler(int pid);
 
-int init_sem_handler(char *identifier, int count);
+int init_sem_handler(int id, int count);
 
-int open_sem_handler(char *identifier);
+int open_sem_handler(int id);
 
-int close_sem_handler(char *identifier);
+int close_sem_handler(int id);
 
-int sem_wait_handler(char *identifier);
+int sem_wait_handler(int id);
 
-int sem_post_handler(char *identifier);
+int sem_post_handler(int id);
 
 int create_pipe_handler(char *identifier);
 

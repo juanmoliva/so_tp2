@@ -107,8 +107,8 @@ uint64_t update_process_state_handler(int pid, char state) {
 
 /// tp2
 
+char ps[500]; 
 char* list_processes_handler() {
-    char ps[500]; 
     int j = 0;
     process_t ** list = process_list_returner();
      for (int i = 0; i < MAX_PID; i++)
@@ -213,19 +213,19 @@ void nice_handler(int pid, int priority){
 
     int result = update_process_priority(pid, priority);
     if (result == -1){
-        puts("Pid invalido")
+        //puts("Pid invalido");
     }
     else if ( result == -2){
-        puts("prioridad invalida, pruebe con numeros enteros positivos menores o iguales a 10");
+        // puts("prioridad invalida, pruebe con numeros enteros positivos menores o iguales a 10");
     }
     else {
-        puts("Prioridad cambiada con exito");
+        // puts("Prioridad cambiada con exito");
     }
 }
 
 void loop_handler(){
-    int mypid = getpid();
-    every_n_second_procecess(mypid);
+    int mypid = get_pid();
+    every_n_seconds_procecess(mypid);
 }
 
 //Done & Tested:

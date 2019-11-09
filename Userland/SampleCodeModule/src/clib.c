@@ -24,7 +24,7 @@
 #define KILL_PROCESS 18
 #define BLOCK_PROCESS 27
 #define NICE 28
-#define NICE 29
+#define LOOP 29
 
 
 #define STDIN       0
@@ -206,22 +206,22 @@ uint64_t list_processes() {
 }
 
 uint64_t list_sem() {
-    uint64_t temp = syscall(LIST_SEM, 0 ,0, 0);
+    sem_t *temp = syscall(LIST_SEM, 0 ,0, 0);
     if(temp == NULL){
         puts("No Sem Yet.");
         return 0;
     }
-    uint64_t blocked_p = temp->blocked_processes;
+    p_blocked_t *blocked_p = temp->blocked_processes;
     int flag = 0;
     while(temp != NULL){
         flag = 0;
         puts("Sem ");
-            printf("%d", temp->id);
+            printf("%d", temp->identifier);
             puts(" contains this blocked processes:");
             puts("/n");
         while(blocked_p != NULL){
             flag = 1;
-            puts("Process ")
+            puts("Process ");
             printf("%d", blocked_p->pid);
             puts("/n");
         }
@@ -233,13 +233,13 @@ uint64_t list_sem() {
 }
 
 uint64_t list_pipes() {
-    uint64_t aux = syscall(LIST_PIPES, 0 ,0, 0);
+    pipe_t *aux = (pipe_t *) syscall(LIST_PIPES, 0 ,0, 0);
     if(aux == NULL){
         puts("No Pipes Yet.");
         return 0;
     }
-    uint64_t temp = aux->global_sem;
-    uint64_t blocked_p = temp->blocked_processes;
+    sem_t *temp = aux->global_sem;
+    p_blocked_t *blocked_p = temp->blocked_processes;
     int flag = 0;
     while(aux != NULL){
         puts("Pipe ");
@@ -249,12 +249,12 @@ uint64_t list_pipes() {
         while(temp != NULL){
             flag = 0;
             puts("Sem ");
-            printf("%d", temp->id);
+            printf("%d", temp->identifier);
             puts(" contains this blocked processes:");
             puts("/n");
             while(blocked_p != NULL){
                 flag = 1;
-                puts("Process ")
+                puts("Process ");
                 printf("%d", blocked_p->pid);
                 puts("/n");
             }
@@ -274,10 +274,10 @@ uint64_t kill_process(int pid) { /////////////////////////////////////////PROBAR
 void block_process (int pid){ ////////////////////////////////////////////CAMBIAR PUTS POR OUTPUT MAYBE
     int result =  syscall (BLOCK_PROCESS, pid, 0, 0);
     if(result == -1){
-        puts=("No existe funcion con tal pid");
+        puts("No existe funcion con tal pid");
     } 
     else{
-        puts=("Bloqueado con exito");
+        puts("Bloqueado con exito");
     }
 }
 

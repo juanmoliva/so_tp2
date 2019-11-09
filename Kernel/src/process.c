@@ -26,7 +26,7 @@ int everyn = 0;
 
 // PROCESOS QUE EXISTEN (Todos los procesos que estan creados!!! Bloqueados, Running, Available)
 process_t *process_list[MAX_PID]; 
-process_t *sleeping_procesess[MAX_SLEEPING]; 
+sleeping_t *sleeping_procecess[MAX_SLEEPING]; 
 
 // contador actual de prioridad.
 int prior_counter = -1;
@@ -490,14 +490,16 @@ int get_free_bed(){
 }
 // funcion que interrumpe al scheduler cada n segundos y le hace runnear un programa
 int every_n_seconds_procecess(int pid){// funcion que interrumpe al scheduler cada n segundos y le hace runnear un programa
-    sleeping_t sleeper->tt = (int)(5/0.55); // guardo los tt necesarios hasta que corra capaz esta mal la cuenta 
+    sleeping_t * sleeper = (sleeping_t *) malloc( sizeof(sleeping_t) );
+    sleeper->tt = (int)(5/0.55); // guardo los tt necesarios hasta que corra capaz esta mal la cuenta 
     sleeper->ppid=pid; // guardo el pid del proceso 
     int free = get_free_bed();// busco lugar libre en el vector
     if (free = -1){ // error por si no hay lugar
         return -1;
     }
     sleeping_procecess[free]= sleeper; // guardo el proceso ahi 
-    update_process_state(sleeping_procecess[i]->ppid, 'b'); // cambio el proceso a bloqueado 
+    update_process_state(process_list[pid], 'b'); // cambio el proceso a bloqueado 
+    //////ACA HAY QUE INTERRUMPIR
 }
 // funcion que corre siempre el scheduler para bajar los tt 
 void check_sleepers(){
@@ -506,7 +508,7 @@ void check_sleepers(){
             if(sleeping_procecess[i]->tt == 1){ // si el tt es igual a 1 ya la puedo despertar porque lo bajaria a 0 
                 update_process_state(sleeping_procecess[i]->ppid, 'a'); // cambio el proceso a 'a'
                 sleeping_procecess[i]==NULL; // saco al proceso de la lista ya que esta despierto
-                return
+                return;
             }
             sleeping_procecess[i]->tt--; // sino hay que despertarlo le bajo un tt 
         }
