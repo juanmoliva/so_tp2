@@ -100,15 +100,8 @@ void initShell() {
 
 
 void initScreen() {
-    clearScreen();   
-}
+    clearScreen();
 
-int readUntilSpace(char *input) {
-    // lee input hasta el espacio y devuelve la cantidad de chars que se leyeron
-}
-
-int readAfterCommand(char *input, int index) {
-    // lee input + index y se fija lo que hay despues (del comando)
 }
 
 int getCommand(char * input){

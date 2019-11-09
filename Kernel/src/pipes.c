@@ -12,7 +12,10 @@
 
 
 
+
+
 pipe_t * first = NULL;
+int sem_counter = 1;
 
 int create_pipe(const char *identifier) {
     // verificar que no haya pipe con el mismo identifier.
@@ -36,7 +39,8 @@ int create_pipe(const char *identifier) {
     pipe->identifier = identifier;
     // pipe->read_sem = sem_init(5*identifier, 0);
     // pipe->write_sem = sem_init(3*identifier, 1);
-    int semInit = sem_init(identifier, 1);
+    int semInit = sem_init(sem_counter*17, 1); // el semaforo tiene que ser un numero random
+    sem_counter++;
     if(!semInit) {
         return 1;
     }
