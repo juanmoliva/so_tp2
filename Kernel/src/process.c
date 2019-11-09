@@ -494,11 +494,11 @@ int every_n_seconds_procecess(int pid){// funcion que interrumpe al scheduler ca
     sleeper->tt = (int)(5/0.55); // guardo los tt necesarios hasta que corra capaz esta mal la cuenta 
     sleeper->ppid=pid; // guardo el pid del proceso 
     int free = get_free_bed();// busco lugar libre en el vector
-    if (free = -1){ // error por si no hay lugar
+    if (free == -1){ // error por si no hay lugar
         return -1;
     }
     sleeping_procecess[free]= sleeper; // guardo el proceso ahi 
-    update_process_state(process_list[pid], 'b'); // cambio el proceso a bloqueado 
+    update_process_state(pid, 'b'); // cambio el proceso a bloqueado 
     //////ACA HAY QUE INTERRUMPIR
 }
 // funcion que corre siempre el scheduler para bajar los tt 
@@ -507,7 +507,7 @@ void check_sleepers(){
         if (sleeping_procecess[i] != NULL){ // si hay un proceso durmiendo en ese lugar
             if(sleeping_procecess[i]->tt == 1){ // si el tt es igual a 1 ya la puedo despertar porque lo bajaria a 0 
                 update_process_state(sleeping_procecess[i]->ppid, 'a'); // cambio el proceso a 'a'
-                sleeping_procecess[i]==NULL; // saco al proceso de la lista ya que esta despierto
+                sleeping_procecess[i]=NULL; // saco al proceso de la lista ya que esta despierto
                 return;
             }
             sleeping_procecess[i]->tt--; // sino hay que despertarlo le bajo un tt 

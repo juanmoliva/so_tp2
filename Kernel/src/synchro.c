@@ -171,7 +171,7 @@ int sem_close(int id) {
     //Lo saco de la lista
     sem_t * prev_current;
     sem_t * current = first_sem;
-    while (current != NULL && strcmp(current->identifier,id))
+    while (current != NULL && current->identifier != id)
     {
         prev_current = current;
         current = current->next;
