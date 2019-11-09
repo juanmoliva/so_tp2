@@ -50,7 +50,8 @@ uint64_t (* syscalls[]) (uint64_t rdi, uint64_t rsi, uint64_t rdx) = {syscall_00
 																	syscall_12, syscall_13, syscall_14, syscall_15,
 																	syscall_16, syscall_17, syscall_18, syscall_19,
 																	syscall_20, syscall_21, syscall_22, syscall_23,
-																	syscall_24, syscall_25, syscall_26};
+																	syscall_24, syscall_25, syscall_26, syscall_27,
+																	syscall_28, syscall_29};
 
 // Dispatcher for software interrupts
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -119,9 +120,10 @@ uint64_t syscall_10 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 uint64_t syscall_11 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* creates a new process, returns the new process id.
 	*/
-	//rsi ----> tiene la priority
-	//rdi ----> tiene el rip
-	return create_process_handler((void *) rdi,(int) rsi, (char *) rdx);
+	//rsi ----> rip
+	//rdi ----> name
+	//rdx ----> param
+	return create_process_handler((void *) rdi,(char *) rsi,  rdx);
 }
 uint64_t syscall_12 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	/* UPDATE PROCESS PRIORITY

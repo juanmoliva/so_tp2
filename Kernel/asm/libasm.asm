@@ -60,15 +60,15 @@ set_stack:
 	push 0x8 ; CS
 	push rsi ; rip   
 	push 0x0 ; pushaq registers
+	push 0x0	;rdx contains program parameter
+	push 0x0
+	push 0x0
 	push rdi
-	push rdi
-	push rdi
-	push rdi
-	push rdi
-	push rdi
-	push rdi
-	push rdi
-	push rdi
+	push rdx
+	push rdx
+	push 0x0
+	push 0x0
+	push 0x0
 	push rdi
 	push rdi
 	push rdi

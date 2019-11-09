@@ -15,7 +15,7 @@ int strcmp (const char *t, const char *s);
 // no tienen funcion en lib.c
 char read_port(char port);
 void write_port(char port, char reg);
-void *set_stack(void *addr,void *rip);
+void *set_stack(void *addr,void *rip, uint64_t rdi);
 void sem_up(void *addr);
 void sem_down(void *addr);
 void int_20();

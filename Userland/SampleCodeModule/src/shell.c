@@ -10,8 +10,13 @@ static int command_count = 21;
 void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
                                       ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
-static char * pipes_strings[] = {"pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"};
-#define MAX_LENGTH  50
+static int command_params_num[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0};
+
+static int outputs[MAX_PID];
+
+
+#define MAX_LENGTH  100
+#define MAX_INPUT_LENGTH 2000
 #define MEM_ADDRESS (void *)0x600000
 
 
@@ -23,16 +28,100 @@ void initShell() {
     int command = NO_CMD;
     char input[MAX_LENGTH];
     char shaved_input[MAX_LENGTH];
+    int curr_in = 0; // pipes_strings[0] = no_pipe
 
     while (command != EXIT_CMD) {
         puts(PROMPT_STRING);
         gets(input, MAX_LENGTH);
         //FALTA SEPARAR EN ESPACIOS Y MANDARLE LA SALIDA DE UNO A LA ENTRADA DEL SIGUIENTE EN EL CASO DEL "cat | wc"
         int char_read = 0;
-        int command_only = 0;
-        int new_process = 1;
-        int j = 0;
-        // user escribe " ps | cat "
+        int action;
+        int end_of_input = 0;
+        char command_input[MAX_INPUT_LENGTH];
+        
+
+        while( !end_of_input && command != EXIT_CMD ) {
+            end_of_input = 1;
+            action = UNDEFINED;
+            command_input[0] = 0;
+            int j = 0;
+            for (; char_read < MAX_LENGTH-1; char_read++) {
+                if ( input[char_read] != ' ' && input[char_read] != '\n' ) {
+                    shaved_input[j++] = input[char_read];
+                }
+                else if (input[char_read] == '\n' ) {
+                    //corre normal
+                    action = END_OF_LINE;
+                    break;
+                } else {
+                    break;
+                }
+            }
+            shaved_input[j] = 0;
+            
+            // averiguamos el comando
+            command = getCommand(shaved_input); 
+            if (command == NO_CMD) {
+                puts("error: lectura de comando erroneo. ");
+                break;
+            }
+
+            // definimos la accion.
+            if( action != END_OF_LINE ) {
+                char_read++;
+                if ( input[char_read] == '#' ) { action = PIPE; char_read; end_of_input=0;}
+                else if ( input[char_read] == '&') {action = BACKGROUND; char_read++;}
+                else { action = PARAMS; }
+            }
+
+            // de donde debo leer el input?
+            if ( command_params_num[command] != 0 ) {
+                if( action == PARAMS ) {
+                        // leo parametro.
+                        int h=0;
+                        while(input[char_read] != '\n' && input[char_read] != ' ') {
+                            command_input[h++] = input[char_read];
+                            char_read++;
+                        }
+                        command_input[h] = 0;
+                        
+                } else if ( curr_in ) {
+                    // el input se recibirá de un pipe.
+                    read_pipe(curr_in, command_input);
+                }
+                else {
+                    puts("A command did not receive required input.");
+                    command = NO_CMD;
+                    break;
+                }
+            } else {
+                curr_in = 0;
+            }
+            
+            // llegados a este punto, si el comando requiere parametros/input los tengo en command_input
+            // ahora solo queda ejecutar el comando, e indicarle el pipe/output donde tiene que escribir.
+
+            if ( action == BACKGROUND ) {
+                // el comando lo ejecutamos en un nuevo proceso, el output lo escribimos en la consola.
+                new_process(&command_functions[command], command_strings[command], command_input);
+                end_of_input = 1;
+            } else if (action == PIPE ) {
+                // creamos un nuevo pipe, un proceso nuevo que escriba en ese pipe.
+                int new_pipe = create_pipe();
+                if (new_pipe == -1)  {
+                    puts("Error. El programa llego al numero máximo de pipes en uso.");
+                    command = NO_CMD;
+                    break;
+                }                
+                int pid = new_process(&command_functions[command], command_strings[command], command_input);
+                outputs[pid] = new_pipe;
+            } else {
+                end_of_input = 1;
+                executeCommand(command);
+            }
+        }
+
+        /* // user escribe " ps | cat "
         for (int i = 0; i < MAX_LENGTH-1; i++)
         {
             if ( input[i] != ' ' && input[i] != '\n' ) {
@@ -51,6 +140,26 @@ void initShell() {
         // char_read = 2 porque ps tiene longitud dos
         // ahora nos fijamos que hay en el indice char_read (que hay despues del espacio)
 
+        // qué parametro se leyó?
+        if(command_only){
+            command = getCommand(input); 
+        }
+        else{
+            command = getCommand(shaved_input); 
+        }
+
+        if ( command_params_num == 1 ) {
+
+        } else if( command_params_num == 2 ){
+
+        } else {
+
+        }
+
+        if ( curr_in ) {
+            // el input debe leerse de un pipe.
+        }
+        
         //Aca cae solo si NO es un comando solo, es decir, tiene otro cosa dps de un PIPE
         if ( !command_only ) { 
             if ( input[char_read] == '#') {
@@ -66,15 +175,8 @@ void initShell() {
             } else {
                 //parametro
             }
-        }
-
-
-        
-        if(command_only){
-            command = getCommand(input); 
-        }
-        else{
-            command = getCommand(shaved_input); 
+        } else if ( command_params_num[command] > 0 ) {
+            /
         }
         
         if ( new_process ){ 
@@ -84,14 +186,16 @@ void initShell() {
         else {
             // 
             // executeCommand(command, params,in, out);
-        }
-       
-        
-        if (command != CLEAR_CMD) newLine();
+        }*/
     }
-	
+	if (command != CLEAR_CMD) newLine();
 	exit();
 }
+
+readParams() {
+
+}
+
 void initScreen() {
     clearScreen();   
 }

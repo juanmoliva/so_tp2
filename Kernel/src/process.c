@@ -40,43 +40,8 @@ int virgin = 1;
 node_t * process_list_first = NULL;
 node_t *process_list_current = NULL;
 
-int init_scheduler() {
-   /*  // se llena la info del primer proceso.
-
-    int pid = get_free_pid();
-    
-    // devuelve -1 si no quedan lugares para el proceso
-    if(pid == -1) {
-        return -1;
-    }
-
-    // Crear estructura del proceso e Inicializar todo
-    process_t * first = (process_t *) malloc( sizeof(process_t) );
-    if( first == NULL ){
-        return -1;
-    }
-    first->ppriority = 1;
-    first->status = 'r'; 
-    first->fd[0] = 0; // STDIN
-    first->fd[1] = 1; // STDOUT
-    
-    //Inserto en array
-    process_list[pid]= first;
-
-    // agrego el proceso a la lista del scheduler.
-    process_list_first = malloc(sizeof(node_t));
-    if(process_list_first == NULL) {
-        return -1;
-    }
-    process_list_first->pid = pid;
-    process_list_first->next = NULL;
-    process_list_current = process_list_first; */
-
-    return 0;
-}
-
 // Crea un procesos con la respectiva PRIORIDAD y su IP
-int create_process(int priority, void *rip, char *name) { ///////
+int create_process(int priority, void *rip, char *name,int rdi) { ///////
     // Asignamos al nuevo proceso un ID libre
     int pid = get_free_pid();
     // Devuelve -1 si no quedan lugares para el proceso
@@ -118,7 +83,7 @@ int create_process(int priority, void *rip, char *name) { ///////
         process_list[pid]->sp = process_list[pid]->bp + STACK_SIZE ;
 
         // Seteo el STACK, le pasamos el SP y el IP.
-        void *updated_sp = set_stack(process_list[pid]->sp,rip);
+        void *updated_sp = set_stack(process_list[pid]->sp,rip,rdi);
         // Actualizo el SP una vez que lo tocamos en ASM
         process_list[pid]->sp = updated_sp;
 
@@ -164,7 +129,7 @@ int create_process(int priority, void *rip, char *name) { ///////
         process_list[pid]->sp = process_list[pid]->bp + STACK_SIZE ;
 
         // Seteo el STACK, le pasamos el SP y el IP.
-        void *updated_sp = set_stack(process_list[pid]->sp,rip);
+        void *updated_sp = set_stack(process_list[pid]->sp,rip,rdi);
         // Actualizo el SP una vez que lo tocamos en ASM
         process_list[pid]->sp = updated_sp;
     }

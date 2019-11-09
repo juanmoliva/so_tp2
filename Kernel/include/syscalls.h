@@ -15,7 +15,7 @@ void beep_handler(uint16_t frequency, uint64_t time);
 void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb);
 void *memory_handler(uint8_t flag,int num);
 uint64_t memory_state_handler(uint8_t free);
-uint64_t create_process_handler(void *rip, int priority, char *name);
+uint64_t create_process_handler(void *rip, char *name, uint64_t param);
 uint64_t update_process_priority_handler(int pid, int priority);
 uint64_t update_process_state_handler(int pid, char state);
 char *list_processes_handler();

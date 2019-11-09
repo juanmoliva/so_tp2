@@ -11,6 +11,7 @@ int concat(char * to, const char * from){
 		to[i] = from[i];
 		i++;
 	}
+	to[i] = 0;
 	return i;
 }
 

@@ -67,7 +67,7 @@ void * initializeKernelBinary()
 	init_mm();
 	//Inicializamos toda la parte de procesos
 	//init_process_list(); Ta todo en el init scheduler alfinal
-	init_scheduler();
+	// init_scheduler();
 	////////////////////////////////////////
 	initVideoDriver();
   	init_console();
@@ -90,12 +90,12 @@ void * initializeKernelBinary()
 // }
 void init_code() {
 	//Esto crea otro proceso que es el SHELL
-	create_process(10,sampleCodeModuleAddress, "shell");
+	create_process(10,sampleCodeModuleAddress, "shell",0);
 }
 
 int main() {
 	//Creamos primer proceso! Proceso Padre.
-    create_process(0,&init_code, "init");
+    create_process(0,&init_code, "init",0);
 	//Corremos init_code osea la funcion del primer proceso
 	init_code();
 

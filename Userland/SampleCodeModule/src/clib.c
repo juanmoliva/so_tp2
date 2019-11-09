@@ -22,6 +22,9 @@
 #define LIST_SEM 15
 #define LIST_PIPES 16
 #define KILL_PROCESS 18
+#define CREATE_PIPE 24
+#define WRITE_PIPE 25
+#define READ_PIPE 26
 #define BLOCK_PROCESS 27
 #define NICE 28
 #define LOOP 29
@@ -32,6 +35,10 @@
 #define STDERR      2
 
 #define MAX_BUFFER 100
+
+static char * pipes_strings[] = {"no_pipe" , "pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"};
+static int highest_pipe = 0;
+
 
 void putchar(uint8_t character) {
     syscall(WRITE_ID, STDOUT, (uint64_t) &character, 1);
@@ -189,8 +196,8 @@ void printSTDIN(){
     //IMPRIMIR EXACTAMENTE LO QUE RECIBE
 }
 
-int new_process(int priority,void *rip, const char *name) {
-    return syscall(CREATE_PROCESS, (uint64_t) rip ,priority, (uint64_t) name);
+int new_process(void *rip, const char *name, void *param) {
+    return syscall(CREATE_PROCESS, (uint64_t) rip , (uint64_t) name, (uint64_t) param);
 }
 
 uint64_t set_process_priority(int pid, int priority) {
@@ -265,6 +272,24 @@ uint64_t list_pipes() {
     }
     return 0;
 
+}
+
+int create_pipe() {
+    if (highest_pipe >= 5) {
+        return -1;
+    }
+    highest_pipe++;
+    return syscall(CREATE_PIPE, pipes_strings[highest_pipe], 0,0);
+    
+}
+
+int read_pipe(int pipe, char *str) {
+    return syscall(READ_PIPE, pipes_strings[pipe], str,0);
+    
+}
+
+int write_pipe(int pipe, char *str) {
+    return syscall(WRITE_PIPE, pipes_strings[pipe], str, 0);
 }
 
 uint64_t kill_process(int pid) { /////////////////////////////////////////PROBAR
