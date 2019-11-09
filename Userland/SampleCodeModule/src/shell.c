@@ -19,7 +19,6 @@ static char * pipes_strings[] = {"pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5
 static void newLine(){
     putchar('\n');
 }
-
 void initShell() {
     initScreen();
     int command = NO_CMD;
@@ -95,22 +94,15 @@ void initShell() {
 	
 	exit();
 }
-
-
-
-
 void initScreen() {
     clearScreen();   
 }
-
 int readUntilSpace(char *input) {
     // lee input hasta el espacio y devuelve la cantidad de chars que se leyeron
 }
-
 int readAfterCommand(char *input, int index) {
     // lee input + index y se fija lo que hay despues (del comando)
 }
-
 int getCommand(char * input){
     for (int i = 0; i < command_count; i++) {
         if (strcmp(input, command_strings[i]) == 0)
@@ -118,14 +110,12 @@ int getCommand(char * input){
     }
     return NO_CMD;
 }
-
 void executeCommand(int command) {
     if (command != NO_CMD)
         command_functions[command]();
     else
         puts("\nInvalid command");
 }
-
 void help_cmd() {
     puts("\nLos comandos validos son los siguientes: ");
     puts("\nhelp ~ Muestra los comandos validos");
@@ -144,20 +134,17 @@ void help_cmd() {
 
 
 }
-
 void date_cmd() {
     char date[11];
     printf("\nHoy es %s", getDate(date));
     // puts("\nHoy es  ");
 	// puts(getDate(date));
 }
-
 void time_cmd() {
     char time[9];
     puts("\nSon las  ");
 	puts(getTime(time));
 }
-
 void sleep_cmd() {
     char car;
     do{
@@ -168,15 +155,12 @@ void sleep_cmd() {
     int millis = (car - '0') * 1000;
     sleep(millis);
 }
-
 void clear_cmd() {
     clearScreen();
 }
-
 void beep_cmd() {
     beep(BEEP_FREQ, 300);
 }
-
 void door_cmd() {
     beep(DOOR_FREQ, 300);
     sleep(300);
@@ -193,19 +177,16 @@ void door_cmd() {
     sleep(150);
     beep(DOOR_FREQ, 150);
 }
-
 void div_zero_cmd() {
     int a = 10, b = 0;
     a = a / b;
     printf("%d", a);
 }
-
 void inv_op_cmd() {
     uint64_t invalid = 0xFFFFFFFFFFFF;
 	uint64_t * ptr = &invalid;
 	((void(*)())ptr)();
 }
-
 void exit_cmd() {
     puts("\nHasta Luego");
 }
@@ -219,46 +200,36 @@ void exit_cmd() {
        char to_print++;
    }
 } */
-
 void sem_cmd(){ 
     list_sem();
 }
-
-void pipe_cmd(){list_pipes();
+void pipe_cmd(){
+    list_pipes();
 }
-
 void filter_cmd(){
     filter_input();
 }
-
 void wc_cmd(){
 }
-
 void cat_cmd(){
     printSTDIN();
 }
-
 void block_cmd(int pid){
     // USE CASE: block 34 ---> bloquea el proceso de pid 34
     // Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
     block_process(pid);
 }
-
 void kill_cmd(int id){
     kill_process(id);
 }
-
 void loop_cmd(){
     loop_function();
 }
-
 void nice_cmd(int pid, int priority){
     nice(pid, priority);
 }
-
 void phylo_cmd(){
 }
-
 void mem_cmd(){
   print_memstate();
 }

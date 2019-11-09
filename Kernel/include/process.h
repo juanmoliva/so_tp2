@@ -25,7 +25,6 @@ typedef struct sleepingp{
     struct sleepingp *next;
 }sleeping_t;
 
-void init_process_list();
 int init_scheduler();
 void *schedule(void *prev_rsp);
 int update_process_priority(int pid, int priority);
@@ -34,10 +33,14 @@ int create_process(int priority, void *rip, char* name);
 int get_pid(); // del running
 int kill_process(int pid);
 process_t ** process_list_returner();
-int get_running_pid();
 void check_sleepers();
 int every_n_seconds_procecess(int pid);
-
+int get_free_bed();
+int get_Process_Pid(process_t* process);
+process_t* get_Pnode(int pid);
+int addProcess_scheduler(int pid);
+int removeProcess_scheduler( int pid );
+int get_free_pid();
 
 
 #endif

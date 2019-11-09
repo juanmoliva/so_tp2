@@ -60,12 +60,18 @@ void drawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
 void printMemState();
 int free(void *addr);
 void *malloc(unsigned long bytes);
+void printSTDIN(); // no implementado
 int new_process(int priority,void *rip, const char *name);
 uint64_t set_process_priority(int pid, int priority);
 uint64_t set_process_state(int pid, char state);
 uint64_t list_processes() ;
 uint64_t list_sem();
 uint64_t list_pipes();
+uint64_t kill_process(int pid);
+void block_process (int pid);
+void filter_input ();
+void nice (int pid, int priority);
+void loop_funtcion();
 
 
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);

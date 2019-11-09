@@ -8,12 +8,7 @@
 static void * start_memsegment = (void*)0x1000000;
 static void * end_memsegment = (void*)0x1500000;
 
-typedef struct node {
-    unsigned char free;
-    unsigned long blocks;
-    void *startAddr;
-    struct node * next;
-} node_t;
+
 
 static node_t *first = (node_t *) 0x1000000;
 
