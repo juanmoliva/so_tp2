@@ -5,7 +5,7 @@
 
 #include <console.h>
 
-#define SYSCALL_COUNT	25
+#define SYSCALL_COUNT	29
 
 // Software handlers functions
 static uint64_t syscall_00 (uint64_t rdi, uint64_t rsi, uint64_t rdx);

@@ -14,5 +14,6 @@ int strcmp(const char * string1, const char * string2);
 char* saveTwoDigit(int number, char * string);
 int isNumber(char character);
 uint64_t getRGB(uint8_t r, uint8_t g, uint8_t b);
+void * memcpy(void * destination, const void * source, uint64_t length);
 
 #endif /* UTILS_H_ */

@@ -6,13 +6,13 @@
 
 static char * command_strings[] = {"help", "date", "time", "sleep", "clear", "beep", "door", "div_zero", "inv_op", "exit", "ps",
                                    "sem","pipe","filter","wc","cat","block","kill","loop","nice","phylo","mem" };
-static int command_count = 21;
-void (* command_functions[]) (void) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
+static int command_count = 22;
+void (* command_functions[]) (int param) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
                                       ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
 static int command_params_num[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0};
 
-static int outputs[MAX_PID];
+void new_process_wrapper( int command );
 
 
 #define MAX_LENGTH  100
@@ -41,6 +41,7 @@ void initShell() {
         
 
         while( !end_of_input && command != EXIT_CMD ) {
+            newLine();
             end_of_input = 1;
             action = UNDEFINED;
             command_input[0] = 0;
@@ -62,23 +63,24 @@ void initShell() {
             // averiguamos el comando
             command = getCommand(shaved_input); 
             if (command == NO_CMD) {
-                puts("error: lectura de comando erroneo. ");
+                puts("error: lectura de comando erroneo. \n");
                 break;
             }
 
             // definimos la accion.
             if( action != END_OF_LINE ) {
                 char_read++;
-                if ( input[char_read] == '#' ) { action = PIPE; char_read; end_of_input=0;}
+                if ( input[char_read] == '#' ) { action = PIPE; char_read++; end_of_input=0;}
                 else if ( input[char_read] == '&') {action = BACKGROUND; char_read++;}
                 else { action = PARAMS; }
             }
 
             // de donde debo leer el input?
+            int h=0;
             if ( command_params_num[command] != 0 ) {
                 if( action == PARAMS ) {
                         // leo parametro.
-                        int h=0;
+                        
                         while(input[char_read] != '\n' && input[char_read] != ' ') {
                             command_input[h++] = input[char_read];
                             char_read++;
@@ -88,9 +90,10 @@ void initShell() {
                 } else if ( curr_in ) {
                     // el input se recibirá de un pipe.
                     read_pipe(curr_in, command_input);
+                    for(;h<MAX_INPUT_LENGTH && command_input[h] != 0; h++){}
                 }
                 else {
-                    puts("A command did not receive required input.");
+                    puts("A command did not receive required input. \n");
                     command = NO_CMD;
                     break;
                 }
@@ -100,101 +103,40 @@ void initShell() {
             
             // llegados a este punto, si el comando requiere parametros/input los tengo en command_input
             // ahora solo queda ejecutar el comando, e indicarle el pipe/output donde tiene que escribir.
-
+            void *param;
+            if (command_input[0] != 0) {
+                param = malloc(h);
+                memcpy(param, command_input, h);
+            }
             if ( action == BACKGROUND ) {
                 // el comando lo ejecutamos en un nuevo proceso, el output lo escribimos en la consola.
-                new_process(&command_functions[command], command_strings[command], command_input);
+                puts("proceso ejecutandose en background! \n");
+                int new_pid = new_process(&new_process_wrapper, command_strings[command], command);
+                setParam(new_pid, param);
                 end_of_input = 1;
             } else if (action == PIPE ) {
                 // creamos un nuevo pipe, un proceso nuevo que escriba en ese pipe.
                 int new_pipe = create_pipe();
                 if (new_pipe == -1)  {
-                    puts("Error. El programa llego al numero máximo de pipes en uso.");
+                    puts("Error. El programa llego al numero máximo de pipes en uso. \n");
                     command = NO_CMD;
                     break;
                 }                
-                int pid = new_process(&command_functions[command], command_strings[command], command_input);
-                outputs[pid] = new_pipe;
+                int new_pid = new_process(&new_process_wrapper, command_strings[command], command);
+                setOutput(new_pid,new_pipe);
+                setParam(new_pid, param);
             } else {
                 end_of_input = 1;
-                executeCommand(command);
+                executeCommand(command, param);
             }
+
+            if (command != CLEAR_CMD) newLine();
         }
-
-        /* // user escribe " ps | cat "
-        for (int i = 0; i < MAX_LENGTH-1; i++)
-        {
-            if ( input[i] != ' ' && input[i] != '\n' ) {
-                char_read++;
-                shaved_input[j++] = input[i];
-            }
-            else if (input[i] == '\n' ) {
-                //corre normal
-                command_only = 1;
-                break;
-            } else {
-                break;
-            }
-        }
-
-        // char_read = 2 porque ps tiene longitud dos
-        // ahora nos fijamos que hay en el indice char_read (que hay despues del espacio)
-
-        // qué parametro se leyó?
-        if(command_only){
-            command = getCommand(input); 
-        }
-        else{
-            command = getCommand(shaved_input); 
-        }
-
-        if ( command_params_num == 1 ) {
-
-        } else if( command_params_num == 2 ){
-
-        } else {
-
-        }
-
-        if ( curr_in ) {
-            // el input debe leerse de un pipe.
-        }
-        
-        //Aca cae solo si NO es un comando solo, es decir, tiene otro cosa dps de un PIPE
-        if ( !command_only ) { 
-            if ( input[char_read] == '#') {
-                // pipe
-                // crear pipe  --> 
-                // int pipe_result = create_pipe()
-
-                
-            } else if ( input[char_read] == '&' ){
-                // background
-                // si piden background creamos un nuevo proceso con la funcion que piden, si no ejecutamos la funcion.
-                new_process = 1;
-            } else {
-                //parametro
-            }
-        } else if ( command_params_num[command] > 0 ) {
-            /
-        }
-        
-        if ( new_process ){ 
-           //
-           // new_process(3, &command, command_strings[command], param);
-        }
-        else {
-            // 
-            // executeCommand(command, params,in, out);
-        }*/
     }
-	if (command != CLEAR_CMD) newLine();
 	exit();
 }
 
-readParams() {
 
-}
 
 void initScreen() {
     clearScreen();   
@@ -206,9 +148,9 @@ int getCommand(char * input){
     }
     return NO_CMD;
 }
-void executeCommand(int command) {
+void executeCommand(int command, void *param) {
     if (command != NO_CMD)
-        command_functions[command]();
+        command_functions[command](param);
     else
         puts("\nInvalid command");
 }
@@ -238,8 +180,8 @@ void date_cmd() {
 }
 void time_cmd() {
     char time[9];
-    puts("\nSon las  ");
-	puts(getTime(time));
+    output("\nSon las  ");
+	output(getTime(time));
 }
 void sleep_cmd() {
     char car;
@@ -289,13 +231,15 @@ void exit_cmd() {
 
 ////////// tp2_so
 
-/* void ps_cmd(){  //// FALOPA , FALTA RETOCAR PERO EN PRINCIPIO MASOMENOS VA 
-   char** to_print = list_processes();
-   while (to_print** != "enofstring"){
-       puts(to_print**);
-       char to_print++;
+void ps_cmd(){  //// FALOPA , FALTA RETOCAR PERO EN PRINCIPIO MASOMENOS VA 
+   char** to_print = (char**) list_processes();
+   output("listing running processes... \n");
+   while (strcmp(**to_print,"enofstring")){
+       puts(**to_print);
+       *to_print++;
    }
-} */
+   output("end -- \n");
+}
 void sem_cmd(){ 
     list_sem();
 }
@@ -308,27 +252,52 @@ void filter_cmd(){
 void wc_cmd(){
 }
 
-void ps_cmd(){
-}
 void cat_cmd(){
     printSTDIN();
 }
-void block_cmd(int pid){
+void block_cmd(void *pid){
     // USE CASE: block 34 ---> bloquea el proceso de pid 34
     // Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
+    int mypid = *(int *)pid;
+    if( mypid > 50 || mypid< 0) { puts("Invalid pid for block. \n"); return; }
     block_process(pid);
 }
-void kill_cmd(int id){
-    kill_process(id);
+void kill_cmd(void *pid){
+    int mypid = *(int *)pid;
+    if( mypid > 50 || mypid< 0) { puts("Invalid pid for pid. \n"); return; }
+    printf("About to kill process %d \n", mypid);
+    kill_process(mypid);
 }
+
+void nice_cmd(void *pid){
+    int mypid = *(int *)pid;
+    if( mypid > 50 || mypid< 0) { puts("Invalid pid for nice. \n"); return; }
+    printf_std("Select new priority for process with pid: %d \n", mypid);
+    char priority[MAX_LENGTH];
+    gets(priority, MAX_LENGTH);
+    priority[5] = 0;
+    int prior = atoi(priority, 5);
+    if( prior < 0 || prior > 10) {
+        printf_std("invalid priority: must be between 0 and 10 \n");
+        return;
+    }
+    nice(mypid, prior );
+    return;
+}
+
 void loop_cmd(){
 }
-void nice_cmd(int pid, int priority){
-    nice(pid, priority);
-}
+
 void phylo_cmd(){
 }
 void mem_cmd(){
   print_memstate();
 }
 
+void new_process_wrapper( int command ) {
+    int pid = get_pid();
+    void *param = getParam( pid );
+    command_functions[command](param);
+
+    kill_process(pid);
+}

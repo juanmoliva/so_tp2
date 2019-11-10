@@ -20,7 +20,7 @@
 void initShell();
 void initScreen();
 int getCommand(char * input);
-void executeCommand(int command);
+void executeCommand(int command, void *param);
 
 void help_cmd();
 void date_cmd();

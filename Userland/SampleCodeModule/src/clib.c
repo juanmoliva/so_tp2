@@ -21,6 +21,7 @@
 #define LIST_PROCESSES 14
 #define LIST_SEM 15
 #define LIST_PIPES 16
+#define GET_PID 17
 #define KILL_PROCESS 18
 #define CREATE_PIPE 24
 #define WRITE_PIPE 25
@@ -30,6 +31,7 @@
 #define LOOP 29
 
 
+
 #define STDIN       0
 #define STDOUT      1
 #define STDERR      2
@@ -37,6 +39,8 @@
 #define MAX_BUFFER 100
 
 static char * pipes_strings[] = {"no_pipe" , "pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"};
+static int outputs[MAX_PID];
+static uint64_t params[MAX_PID];
 static int highest_pipe = 0;
 
 
@@ -53,6 +57,50 @@ void perror(const char * string) {
 }
 
 void printf(char * str, ...){
+    va_list list;
+    va_start(list, str);
+    int i = 0;
+
+    char newStr[MAX_BUFFER] = {0};
+    int len = 0;
+
+    while(str[i] != 0){
+    	if(str[i] == '%' && (i == 0 || str[i-1] != '\\')){
+            char buffer[MAX_BUFFER] = {0};
+            switch (str[i+1]) {
+                case 'd':
+                    itoa((int) va_arg(list,int), buffer, 10);
+                    len += concat((newStr + len), buffer);
+                    i += 2;
+                    break;
+                case 's':
+                    len += concat((newStr + len), va_arg(list,char*));
+                    i += 2;
+                    break;
+                default:
+                    i += 2;
+                    break;
+            }
+        }
+        else {
+            newStr[len] = str[i];
+            len++;
+            i++;
+        }
+    }
+    va_end(list);
+    newStr[len] = 0;
+    len++;
+    int pipe = outputs[get_pid()];
+    if ( pipe ) {
+        write_pipe(pipe, newStr );
+    } else {
+        syscall(WRITE_ID, STDOUT, (uint64_t) newStr, len);
+    }
+}
+
+void printf_std(char * str, ...){
+    // prints always on standard output.
     va_list list;
     va_start(list, str);
     int i = 0;
@@ -184,12 +232,12 @@ int free(void *addr) {
 
 void print_memstate() {
     uint64_t var = syscall(MEMORY_STATE_ID,0,0,0);
-    puts("Memoria total administrada: ");
+    output("Memoria total administrada: ");
     printf("%d", var);
-    puts("\n");
-    puts("Memoria libre disponible: ");
+    output("\n");
+    output("Memoria libre disponible: ");
     printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
-    puts("\n");
+    output("\n");
 }
 
 void printSTDIN(){
@@ -213,7 +261,7 @@ uint64_t list_processes() {
 }
 
 uint64_t list_sem() {
-    sem_t *temp = syscall(LIST_SEM, 0 ,0, 0);
+    sem_t *temp = (sem_t *) syscall(LIST_SEM, 0 ,0, 0);
     if(temp == NULL){
         puts("No Sem Yet.");
         return 0;
@@ -279,7 +327,7 @@ int create_pipe() {
         return -1;
     }
     highest_pipe++;
-    return syscall(CREATE_PIPE, pipes_strings[highest_pipe], 0,0);
+    return syscall(CREATE_PIPE, (uint64_t) pipes_strings[highest_pipe], 0,0);
     
 }
 
@@ -299,10 +347,10 @@ uint64_t kill_process(int pid) { /////////////////////////////////////////PROBAR
 void block_process (int pid){ ////////////////////////////////////////////CAMBIAR PUTS POR OUTPUT MAYBE
     int result =  syscall (BLOCK_PROCESS, pid, 0, 0);
     if(result == -1){
-        puts("No existe funcion con tal pid");
+        output("No existe funcion con tal pid");
     } 
     else{
-        puts("Bloqueado con exito");
+        output("Bloqueado con exito");
     }
 }
 
@@ -320,12 +368,29 @@ void loop_funtcion(){
 }
 
 
-output(char *str, char* pipe) {
-   if(!strcmp(pipe,STD_OUT)) {
-       // std_out
-       puts(str);
+int output(char *str) {
+   int mypid = get_pid();
+   if( outputs[mypid]) {
+       write_pipe(outputs[mypid],str);
    }
    else {
-      write_pipe(pipe);
+      puts(str);
    }
+   return 0;
+}
+
+void setOutput( int pid , int new_pipe ){
+    outputs[pid] = new_pipe;
+}
+
+void setParam( int pid , uint64_t param ){
+    params[pid] = param;
+}
+
+uint64_t getParam( int pid ){
+    return params[pid];
+}
+
+int get_pid() {
+    return syscall(GET_PID,0,0,0);
 }

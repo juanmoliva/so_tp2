@@ -58,6 +58,7 @@ void puts(const char * string);
 void perror(const char * string);
 void putchar(uint8_t character);
 void printf(char * str, ...);
+void printf_std(char * str, ...);
 uint8_t getchar(void);
 char * gets(char * string, uint64_t size);
 void clearScreen(void);
@@ -86,6 +87,11 @@ void loop_function();
 int create_pipe();
 int read_pipe(int pipe, char *str);
 int write_pipe(int pipe, char *str);
+int output(char *str);
+void setOutput(int pid,int new_pipe);
+int get_pid();
+void setParam( int pid , uint64_t param );
+uint64_t getParam( int pid );
 
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
