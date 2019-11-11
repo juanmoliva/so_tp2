@@ -18,7 +18,7 @@ uint64_t memory_state_handler(uint8_t free);
 uint64_t create_process_handler(void *rip, char *name, uint64_t param);
 uint64_t update_process_priority_handler(int pid, int priority);
 uint64_t update_process_state_handler(int pid, char state);
-char *list_processes_handler();
+uint64_t list_processes_handler();
 uint64_t list_pipes_handler();
 int get_pid_handler();
 int kill_process_handler(int pid);

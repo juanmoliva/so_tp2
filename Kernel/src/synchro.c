@@ -3,6 +3,7 @@
 #include <strings.h>
 #include <synchro.h>
 #include <memory.h>
+#include <interrupts.h>
 
 // semaforos:
 // - se inicializan en 1, los identifica una string que es el identificador.
@@ -36,8 +37,8 @@ int sem_init(int id, int initial_count ) {
         sem = sem->next;
     }
 
-    sem->identifier = id;
-    sem->counter = initial_count;
+    sem->identifier = (uint64_t) id;
+    sem->counter = (uint64_t) initial_count;
     sem->blocked_processes = NULL;
     sem->next = NULL;
 
@@ -52,7 +53,7 @@ sem_t *sem_open(int id) {
     // while( current != NULL && strcmp(current->identifier,str)) { 
     //     current = current->next;
     // }
-    while( current != NULL && current->identifier != id ) { 
+    while( current != NULL && current->identifier != (uint64_t) id ) { 
         current = current->next;
     }
     // si es NULL no se encontró el semaforo.
@@ -74,8 +75,8 @@ int sem_wait(int id) {
 
         p_blocked_t  * pblocked;
         if ( sem->blocked_processes == NULL ) {
-        sem->blocked_processes = malloc(sizeof(p_blocked_t));
-        pblocked = sem->blocked_processes;
+            sem->blocked_processes = malloc(sizeof(p_blocked_t));
+            pblocked = sem->blocked_processes;
         }
         else {
             pblocked = sem->blocked_processes;
@@ -106,7 +107,9 @@ int sem_wait(int id) {
 
         update_process_state(pid, 'b');
 
-        int_20();
+        _hlt();
+
+        ;
 
         // aca dejo de estar bloqueado, hay que sacarlo de la lista.
         p_blocked_t * prev_c;
@@ -129,9 +132,11 @@ int sem_wait(int id) {
         
 
         // cuando retoma la ejecucion, sem->counter va a estar en 1.        
+    } else {
+        sem_down( &(sem->counter) );
     }
     if (sem->counter >= 1) {
-        sem_down( &sem->counter );
+        sem_down( &(sem->counter) );
     }
 
     return 0;
@@ -144,24 +149,26 @@ int sem_post( int id ) {
         return 1;
     }
 
-    if (sem->counter == 0) {
+    sem_up( &(sem->counter) );
+
+    if (sem->counter <= 1) {
         // vuelo un proceso de la lista de bloqueados
         if( sem->blocked_processes == NULL ) {
             // ningun proceso bloqueado.
         }
         else{
             // saco el primer nodo de la lista.
-            p_blocked_t *temp = sem->blocked_processes;
+            p_blocked_t *temp = sem->blocked_processes->next;
 
-            update_process_state(temp->pid, 'a');
+            update_process_state(sem->blocked_processes->pid, 'a');
 
-            sem->blocked_processes = sem->blocked_processes->next;
+            // free_block(sem->blocked_processes);
 
-            free_block(temp);
+            sem->blocked_processes = temp;
+
+            
         }
     }
-
-    sem_up( &sem->counter );
 
     return 0;
 }
@@ -171,7 +178,7 @@ int sem_close(int id) {
     //Lo saco de la lista
     sem_t * prev_current;
     sem_t * current = first_sem;
-    while (current != NULL && current->identifier != id)
+    while (current != NULL && current->identifier != (uint64_t) id)
     {
         prev_current = current;
         current = current->next;

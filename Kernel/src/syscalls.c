@@ -107,21 +107,8 @@ uint64_t update_process_state_handler(int pid, char state) {
 
 /// tp2
 
-char ps[500]; 
-char* list_processes_handler() {
-    int j = 0;
-    process_t ** list = process_list_returner();
-     for (int i = 0; i < MAX_PID; i++)
-        {
-            if(list[i]!= NULL){
-               // ps[j++] = int_to_string(i,  ,10);
-                int_to_string(i, &ps[j++] ,10);
-            }
-       int_to_string(-1, &ps[j++] ,10);
-        }
-    ps[j]= "endofdtring";
-    
-    return ps;
+uint64_t list_processes_handler() {
+    return (uint64_t) process_list_returner();
 }
 
 

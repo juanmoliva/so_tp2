@@ -8,6 +8,7 @@ typedef struct pipe {
     // sem_t * read_sem;
     // sem_t * write_sem;
     sem_t * global_sem;
+    sem_t * read_sem;
     //Region donde se va a escribir
     void * critical_region;
 

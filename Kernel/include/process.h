@@ -8,7 +8,6 @@ typedef struct process {
     unsigned char ppriority;
     void *bp;
     void *sp; // stack pointer
-    int fd[2]; // fd[0] es para LECTURA. fd[1] es para escritura.
     struct process * next;
     char *name;
 } process_t;

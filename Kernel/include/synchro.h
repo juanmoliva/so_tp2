@@ -2,6 +2,7 @@
 #define SYNCHRO_H_
 
 #include <process.h>
+#include <stdint.h>
 
 
 #define MAX_SEM 100
@@ -15,8 +16,8 @@ typedef struct p_blocked{
 
 //Creo la struct de semaforos
 typedef struct sem {
-    int identifier;
-    int counter;
+    uint64_t identifier;
+    uint64_t counter;
     struct sem* next;
     //lista de procesos bloqueados en un semaforo
     p_blocked_t * blocked_processes;

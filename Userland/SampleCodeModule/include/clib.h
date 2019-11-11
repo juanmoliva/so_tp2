@@ -48,11 +48,21 @@ typedef struct pipe {
     // sem_t * read_sem;
     // sem_t * write_sem;
     sem_t * global_sem;
+    sem_t * read_sem;
     //Region donde se va a escribir
     void * critical_region;
 
     struct pipe * next;
 } pipe_t;
+
+typedef struct process {
+    unsigned char status; // READY/AVAILABLE ('a') , BLOCKED ('b') OR RUNNING ('r')
+    unsigned char ppriority;
+    void *bp;
+    void *sp; // stack pointer
+    struct process * next;
+    char *name;
+} process_t;
 
 void puts(const char * string);
 void perror(const char * string);
@@ -73,7 +83,7 @@ void print_memstate();
 int free(void *addr);
 void *malloc(unsigned long bytes);
 void printSTDIN(); // no implementado
-int new_process(void *rip, const char *name, void *param);
+int new_process(void *rip, const char *name, uint64_t param);
 uint64_t set_process_priority(int pid, int priority);
 uint64_t set_process_state(int pid, char state);
 uint64_t list_processes() ;
@@ -81,7 +91,8 @@ uint64_t list_sem();
 uint64_t list_pipes();
 uint64_t kill_process(int pid);
 void block_process (int pid);
-void filter_input ();
+void filter_input(char *input, char *dest);
+int wc_input(char *input);
 void nice (int pid, int priority);
 void loop_function();
 int create_pipe();
@@ -91,7 +102,7 @@ int output(char *str);
 void setOutput(int pid,int new_pipe);
 int get_pid();
 void setParam( int pid , uint64_t param );
-uint64_t getParam( int pid );
+void *getParam( int pid );
 
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 

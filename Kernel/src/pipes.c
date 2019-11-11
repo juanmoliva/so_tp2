@@ -40,17 +40,24 @@ int create_pipe(const char *identifier) {
     // pipe->read_sem = sem_init(5*identifier, 0);
     // pipe->write_sem = sem_init(3*identifier, 1);
     int semInit = sem_init(sem_counter*17, 1); // el semaforo tiene que ser un numero random
-    sem_counter++;
-    if(!semInit) {
+    int semInit_read = sem_init(sem_counter*19, 0);
+    
+    if( semInit || semInit_read) {
         return 1;
     }
     pipe->global_sem = sem_open(sem_counter*17);
     if ( pipe->global_sem == NULL ) {
         return 2;
     }
+    pipe->read_sem = sem_open(sem_counter*19);
+    if ( pipe->read_sem == NULL ) {
+        return 2;
+    }
     pipe->critical_region = malloc(CRIT_REGION_SIZE);
     pipe->next = NULL;
 
+
+    sem_counter++;
     return 0;
 }
 
@@ -78,6 +85,9 @@ int write_pipe(const char *identifier,const char *str) {
         
         sem_post(current->global_sem->identifier);
         //sem_post(current->write_sem->identifier);
+
+        // ya se puede leer.
+        sem_post(current->read_sem->identifier);
     }
     
     return 0;
@@ -98,6 +108,9 @@ int read_pipe(const char *identifier, char *destination) { //Aca lo podemos hace
     }else
     {
         //Tengo el pipe que quiero modificar
+        
+        // espero a que se haya escrito.
+        sem_wait(current->read_sem->identifier);
         
         sem_wait(current->global_sem->identifier);
         // sem_wait(current->write_sem->identifier);

@@ -83,12 +83,14 @@ set_stack:
 ; sem_up
 
 sem_up:
-push rbp
+	push rbp
 	mov rbp, rsp
 	push rax
+
 	mov rax, [rdi] 
 	inc rax
-	xchg rax, rdi
+	xchg rax, [rdi]
+
 	pop rax
 	mov rsp, rbp
 	pop rbp
@@ -103,7 +105,7 @@ sem_down:
 
 	mov rax, [rdi] 
 	dec rax
-	xchg rax, rdi
+	xchg rax, [rdi]
 	
 	pop rax
 	mov rsp, rbp

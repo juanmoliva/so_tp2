@@ -59,9 +59,7 @@ int create_process(int priority, void *rip, char *name,int rdi) { ///////
     //temp->pid Se hace mas adelante
     //temp->pname = name;
     temp->ppriority = priority;
-    temp->status = 'a'; 
-    temp->fd[0] = 0 ;// STDIN
-    temp->fd[1] = 1 ;// STDOUT
+    temp->status = 'a';
     temp->name = name;
 
     // Malloc espacio para el stack del proceso
@@ -282,9 +280,10 @@ int removeProcess_scheduler( int pid ) {
         if ( process_list_first->pid == pid ) {
             // era el primero de la lista
             if( process_list_first->next != NULL) {
-                node_t *free_this = process_list_first;
-                process_list_first = process_list_first->next;
-                free_block(free_this);
+                node_t *new_first = process_list_first->next;
+                free_block(process_list_first);
+                process_list_first = new_first->next;
+                
             }
             else {
                 // era el unico proceso en la lista
@@ -294,7 +293,7 @@ int removeProcess_scheduler( int pid ) {
         }
         else {
         prev->next = curr->next;
-        free_block(curr);
+        // free_block(curr);
         }
     }
 
@@ -464,7 +463,7 @@ int every_n_seconds_procecess(int pid){// funcion que interrumpe al scheduler ca
     }
     sleeping_procecess[free]= sleeper; // guardo el proceso ahi 
     update_process_state(pid, 'b'); // cambio el proceso a bloqueado 
-    //////ACA HAY QUE INTERRUMPIR
+    _hlt;
 }
 // funcion que corre siempre el scheduler para bajar los tt 
 void check_sleepers(){

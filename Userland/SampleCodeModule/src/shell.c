@@ -7,7 +7,7 @@
 static char * command_strings[] = {"help", "date", "time", "sleep", "clear", "beep", "door", "div_zero", "inv_op", "exit", "ps",
                                    "sem","pipe","filter","wc","cat","block","kill","loop","nice","phylo","mem" };
 static int command_count = 22;
-void (* command_functions[]) (int param) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
+void (* command_functions[]) (void *param) = {help_cmd, date_cmd, time_cmd, sleep_cmd, clear_cmd, beep_cmd, door_cmd, div_zero_cmd, inv_op_cmd, exit_cmd, ps_cmd
                                       ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
 static int command_params_num[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0};
@@ -33,10 +33,10 @@ void initShell() {
     while (command != EXIT_CMD) {
         puts(PROMPT_STRING);
         gets(input, MAX_LENGTH);
-        //FALTA SEPARAR EN ESPACIOS Y MANDARLE LA SALIDA DE UNO A LA ENTRADA DEL SIGUIENTE EN EL CASO DEL "cat | wc"
         int char_read = 0;
         int action;
         int end_of_input = 0;
+        void *param;
         char command_input[MAX_INPUT_LENGTH];
         
 
@@ -45,12 +45,13 @@ void initShell() {
             end_of_input = 1;
             action = UNDEFINED;
             command_input[0] = 0;
+            param = (void *)0x0;
             int j = 0;
             for (; char_read < MAX_LENGTH-1; char_read++) {
-                if ( input[char_read] != ' ' && input[char_read] != '\n' ) {
+                if ( input[char_read] != ' ' && input[char_read] != '\n' && input[char_read] != '\0' ) {
                     shaved_input[j++] = input[char_read];
                 }
-                else if (input[char_read] == '\n' ) {
+                else if (input[char_read] == '\n' || input[char_read] == '\0' ) {
                     //corre normal
                     action = END_OF_LINE;
                     break;
@@ -78,20 +79,24 @@ void initShell() {
             // de donde debo leer el input?
             int h=0;
             if ( command_params_num[command] != 0 ) {
-                if( action == PARAMS ) {
+                if ( curr_in ) {
+                    // el input se recibirá de un pipe.
+                    puts("reading from pipe \n");
+                    read_pipe(curr_in, command_input);
+                    puts("read from pipe: ");
+                    puts(command_input);
+                    puts("\n");
+                    for(;h<MAX_INPUT_LENGTH && command_input[h] != 0; h++){}
+                } else if( action == PARAMS ) {
                         // leo parametro.
                         
-                        while(input[char_read] != '\n' && input[char_read] != ' ') {
+                        while(input[char_read] != '\n' && input[char_read] != ' ' && input[char_read] != '\0') {
                             command_input[h++] = input[char_read];
                             char_read++;
                         }
                         command_input[h] = 0;
                         
-                } else if ( curr_in ) {
-                    // el input se recibirá de un pipe.
-                    read_pipe(curr_in, command_input);
-                    for(;h<MAX_INPUT_LENGTH && command_input[h] != 0; h++){}
-                }
+                } 
                 else {
                     puts("A command did not receive required input. \n");
                     command = NO_CMD;
@@ -103,7 +108,7 @@ void initShell() {
             
             // llegados a este punto, si el comando requiere parametros/input los tengo en command_input
             // ahora solo queda ejecutar el comando, e indicarle el pipe/output donde tiene que escribir.
-            void *param;
+            
             if (command_input[0] != 0) {
                 param = malloc(h);
                 memcpy(param, command_input, h);
@@ -111,20 +116,24 @@ void initShell() {
             if ( action == BACKGROUND ) {
                 // el comando lo ejecutamos en un nuevo proceso, el output lo escribimos en la consola.
                 puts("proceso ejecutandose en background! \n");
-                int new_pid = new_process(&new_process_wrapper, command_strings[command], command);
-                setParam(new_pid, param);
+                int new_pid = new_process(&new_process_wrapper, command_strings[command],(uint64_t) command);
+                setParam(new_pid,(uint64_t) param);
                 end_of_input = 1;
             } else if (action == PIPE ) {
                 // creamos un nuevo pipe, un proceso nuevo que escriba en ese pipe.
                 int new_pipe = create_pipe();
+                puts("a pipe was created: ");
+                printf("%d", new_pipe);
                 if (new_pipe == -1)  {
                     puts("Error. El programa llego al numero máximo de pipes en uso. \n");
                     command = NO_CMD;
                     break;
-                }                
-                int new_pid = new_process(&new_process_wrapper, command_strings[command], command);
+                }            
+                curr_in = new_pipe;    
+                int new_pid = new_process(&new_process_wrapper, command_strings[command], (uint64_t)command);
                 setOutput(new_pid,new_pipe);
-                setParam(new_pid, param);
+                setParam(new_pid,(uint64_t) param);
+                char_read++; // espacio
             } else {
                 end_of_input = 1;
                 executeCommand(command, param);
@@ -149,8 +158,10 @@ int getCommand(char * input){
     return NO_CMD;
 }
 void executeCommand(int command, void *param) {
-    if (command != NO_CMD)
+    if (command != NO_CMD) {
         command_functions[command](param);
+        free(param); 
+    }
     else
         puts("\nInvalid command");
 }
@@ -169,6 +180,13 @@ void help_cmd() {
     puts("\nps ~ lista todos los procesos");
     puts("\nsem ~ lista todos los semaforos ");
     puts("\npipe ~ lista todos los pipes");
+    puts("\ncat ~ redirige output");
+    puts("\nwc ~ cuenta lineas del input");
+    puts("\nfilter ~ filtra vocales del input");
+    puts("\nblock <pid> ~ bloquea un proceso");
+    puts("\nkill <pid> ~ mata un proceso");
+    puts("\nnice <pid> ~ cambia la prioridad de un proceso");
+    puts("\npara utilizar un pipe utilice el simbolo '#' ");
 
 
 }
@@ -231,14 +249,8 @@ void exit_cmd() {
 
 ////////// tp2_so
 
-void ps_cmd(){  //// FALOPA , FALTA RETOCAR PERO EN PRINCIPIO MASOMENOS VA 
-   char** to_print = (char**) list_processes();
-   output("listing running processes... \n");
-   while (strcmp(**to_print,"enofstring")){
-       puts(**to_print);
-       *to_print++;
-   }
-   output("end -- \n");
+void ps_cmd(){ 
+    list_processes();
 }
 void sem_cmd(){ 
     list_sem();
@@ -246,37 +258,54 @@ void sem_cmd(){
 void pipe_cmd(){
     list_pipes();
 }
-void filter_cmd(){
-    filter_input();
-}
-void wc_cmd(){
+void filter_cmd(void *input){
+    if (input == NULL) {
+        output(" \n invalid input for filter. \n");
+        return;
+    }
+    char dest[500];
+    puts("input received: \n");
+    puts((char *)input);
+    puts("\n");
+    filter_input( (char *)input, dest );
+    puts("output from filter: \n");
+    output(dest);
 }
 
-void cat_cmd(){
-    printSTDIN();
+void wc_cmd(void *input){
+    if (input == NULL) {
+        output(" \n invalid input for wc. \n");
+        return;
+    }
+    printf("%d lines. \n", wc_input((char *)input));
+}
+
+void cat_cmd(void *param){
+    output((char *)param);
 }
 void block_cmd(void *pid){
     // USE CASE: block 34 ---> bloquea el proceso de pid 34
     // Cambia el estado de un proceso entre ​bloqueado​ y ​listo​ dado su ID.
-    int mypid = *(int *)pid;
+    int mypid = atoi(pid,1);
     if( mypid > 50 || mypid< 0) { puts("Invalid pid for block. \n"); return; }
-    block_process(pid);
+    block_process(mypid);
 }
 void kill_cmd(void *pid){
-    int mypid = *(int *)pid;
+    int mypid = atoi(pid,1);
     if( mypid > 50 || mypid< 0) { puts("Invalid pid for pid. \n"); return; }
     printf("About to kill process %d \n", mypid);
     kill_process(mypid);
 }
 
 void nice_cmd(void *pid){
-    int mypid = *(int *)pid;
+    int mypid = atoi(pid,1);
+    printf("%d \n", mypid);
     if( mypid > 50 || mypid< 0) { puts("Invalid pid for nice. \n"); return; }
     printf_std("Select new priority for process with pid: %d \n", mypid);
     char priority[MAX_LENGTH];
     gets(priority, MAX_LENGTH);
     priority[5] = 0;
-    int prior = atoi(priority, 5);
+    int prior = atoi(priority, 1);
     if( prior < 0 || prior > 10) {
         printf_std("invalid priority: must be between 0 and 10 \n");
         return;
@@ -286,6 +315,7 @@ void nice_cmd(void *pid){
 }
 
 void loop_cmd(){
+    loop_function();
 }
 
 void phylo_cmd(){

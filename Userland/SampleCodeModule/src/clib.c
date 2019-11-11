@@ -39,8 +39,9 @@
 #define MAX_BUFFER 100
 
 static char * pipes_strings[] = {"no_pipe" , "pipe_1", "pipe_2", "pipe_3", "pipe_4", "pipe_5"};
+
 static int outputs[MAX_PID];
-static uint64_t params[MAX_PID];
+static void *params[MAX_PID];
 static int highest_pipe = 0;
 
 
@@ -232,19 +233,11 @@ int free(void *addr) {
 
 void print_memstate() {
     uint64_t var = syscall(MEMORY_STATE_ID,0,0,0);
-    output("Memoria total administrada: ");
-    printf("%d", var);
-    output("\n");
-    output("Memoria libre disponible: ");
-    printf("%d", syscall(MEMORY_STATE_ID,1,0,0));
-    output("\n");
+    uint64_t var2= syscall(MEMORY_STATE_ID,1,0,0);
+    printf("Memoria total administrada: %d \n Memoria libre disponible: %d \n",var,var2);
 }
 
-void printSTDIN(){
-    //IMPRIMIR EXACTAMENTE LO QUE RECIBE
-}
-
-int new_process(void *rip, const char *name, void *param) {
+int new_process(void *rip, const char *name, uint64_t param) {
     return syscall(CREATE_PROCESS, (uint64_t) rip , (uint64_t) name, (uint64_t) param);
 }
 
@@ -257,7 +250,14 @@ uint64_t set_process_state(int pid, char state) {
 }
 
 uint64_t list_processes() {
-    return syscall(LIST_PROCESSES, 0 ,0, 0);
+    process_t **temp = (process_t **) syscall(LIST_PROCESSES, 0 ,0, 0);
+    for(int i = 0 ; i < 50 ; i++ ) {
+       if( temp[i] != NULL) {
+           printf("Process called %s with pid %d is running and has priority %d \n",temp[i]->name, i, temp[i]->ppriority);
+       }
+    }
+    output("End. \n");
+    return 0;
 }
 
 uint64_t list_sem() {
@@ -283,6 +283,7 @@ uint64_t list_sem() {
         if(!flag){
             puts("None");
         }
+        temp=temp->next;
     }
     return 0;
 }
@@ -316,35 +317,40 @@ uint64_t list_pipes() {
             if(!flag){
                 puts("None");
             }
+            temp=temp->next;
         }
+        aux=aux->next;
     }
     return 0;
 
 }
 
 int create_pipe() {
-    if (highest_pipe >= 5) {
+    if (highest_pipe >= 4) {
+        return -1;
+    }
+    int result = syscall(CREATE_PIPE, (uint64_t) pipes_strings[highest_pipe + 1], 0,0);
+    if (result != 0) {
         return -1;
     }
     highest_pipe++;
-    return syscall(CREATE_PIPE, (uint64_t) pipes_strings[highest_pipe], 0,0);
-    
+    return highest_pipe;
 }
 
 int read_pipe(int pipe, char *str) {
-    return syscall(READ_PIPE, pipes_strings[pipe], str,0);
+    return syscall(READ_PIPE, (uint64_t) pipes_strings[pipe], (uint64_t) str,0);
     
 }
 
 int write_pipe(int pipe, char *str) {
-    return syscall(WRITE_PIPE, pipes_strings[pipe], str, 0);
+    return syscall(WRITE_PIPE,(uint64_t) pipes_strings[pipe],(uint64_t) str, 0);
 }
 
-uint64_t kill_process(int pid) { /////////////////////////////////////////PROBAR
+uint64_t kill_process(int pid) { 
     return syscall(KILL_PROCESS, pid,0, 0);
 }
 
-void block_process (int pid){ ////////////////////////////////////////////CAMBIAR PUTS POR OUTPUT MAYBE
+void block_process (int pid){ 
     int result =  syscall (BLOCK_PROCESS, pid, 0, 0);
     if(result == -1){
         output("No existe funcion con tal pid");
@@ -354,15 +360,44 @@ void block_process (int pid){ ////////////////////////////////////////////CAMBIA
     }
 }
 
-void filter_input (){
+void filter_input (char *input, char *dest) {
+    int counter = 0,j=0;
+    while ( *input != 0 && counter <= 2000) {
+        if(*input != 'a' && *input != 'e' && *input != 'i' && *input != 'o' && *input != 'u') {
+            *(dest+j) = *(input);
+            j++;
+        }
+        input++;
+        counter++;
+    }
+    *(dest+j) = 0;
+    
+}
 
+int wc_input(char *input) {
+    int counter = 0;
+    int lines = 0;
+    if (*input == 0 ) {
+        return 0;
+    }
+    else {
+        lines++;
+    }
+    while ( *input != 0 && counter <= 2000) {
+        if(*input == '\n') {
+           lines++;
+        }
+        
+    }
+
+    return lines;
 }
 
 void nice (int pid, int priority){
      syscall(NICE, pid, priority, 0);
 }
 
-void loop_funtcion(){
+void loop_function(){
      syscall(LOOP,0,0,0);
      puts("ANISMANLOMATARON");
 }
@@ -384,10 +419,10 @@ void setOutput( int pid , int new_pipe ){
 }
 
 void setParam( int pid , uint64_t param ){
-    params[pid] = param;
+    params[pid] = (void *)param;
 }
 
-uint64_t getParam( int pid ){
+void *getParam( int pid ){
     return params[pid];
 }
 
