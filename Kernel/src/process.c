@@ -463,7 +463,7 @@ int every_n_seconds_procecess(int pid){// funcion que interrumpe al scheduler ca
     }
     sleeping_procecess[free]= sleeper; // guardo el proceso ahi 
     update_process_state(pid, 'b'); // cambio el proceso a bloqueado 
-    _hlt;
+    return 0;
 }
 // funcion que corre siempre el scheduler para bajar los tt 
 void check_sleepers(){

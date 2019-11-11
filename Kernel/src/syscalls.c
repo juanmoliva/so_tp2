@@ -77,7 +77,7 @@ void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb) {
 
 void *memory_handler(uint8_t flag,int num){
     if(flag) {
-        return free_block(num);
+        return (void *)free_block((void *)num); // casteo solo por claridad, no tiene uso.
     }
     else {
         return allocate_blocks(num);
@@ -114,7 +114,7 @@ uint64_t list_processes_handler() {
 
 ////PIPES
 uint64_t list_pipes_handler() {
-    return list_pipes();
+    return (uint64_t) list_pipes();
 }
 ////////////
 int get_pid_handler() {
@@ -158,7 +158,7 @@ int init_sem_handler(int identifier, int count) {
 }
 
 int open_sem_handler(int identifier) {
-    return sem_open(identifier);
+    return (int) sem_open(identifier);
 }
 
 int close_sem_handler(int identifier) {

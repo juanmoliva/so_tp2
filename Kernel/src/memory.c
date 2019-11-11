@@ -81,7 +81,6 @@ int free_block(void *address) {
     // sino, no se hace nada.
 
     node_mem_t *current = first_mem_node;
-    node_mem_t *next = current->next;
 
     //Recorro todo hasta encontrar el lugar que me pasaron
     while ( current != NULL ) {
@@ -91,7 +90,6 @@ int free_block(void *address) {
         }
         else {
             current = current->next;
-            next = current->next;
         }
     }
     //Sale por dos casos: 1) Se termino la lista     2) Lo encontro
