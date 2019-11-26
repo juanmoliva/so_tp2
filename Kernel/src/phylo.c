@@ -1,6 +1,6 @@
 #include <phylo.h>
 
-typedef int semaphore; /* semaphores are a special kind of int */
+ sem; /* semaphores are a special kind of int */
 int state[N]; /* array to keep track of everyone’s state */
 semaphore mutex = 1;  /* mutual exclusion for critical regions */
 semaphore s[N]; /* one semaphore per philosopher */
@@ -26,8 +26,8 @@ void take_forks(int i)      /* i: philosopher number, from 0 to N−1 */
 void put_forks(int i) {         /* i: philosopher number, from 0 to N−1 */
     down(&mutex);           /* enter critical region */
     state[i] = THINKING;    /* philosopher has finished eating */
-    test(LEFT);             /* see if left neighbor can now eat */
-    test(RIGHT);            /* see if right neighbor can now eat */
+    test( LEFT );             /* see if left neighbor can now eat */
+    test(RIGHT );            /* see if right neighbor can now eat */
     up(&mutex);             /* exit critical region */
  }
 

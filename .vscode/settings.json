@@ -15,6 +15,7 @@
         "pipes.h": "c",
         "interrupts.h": "c",
         "shell.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "phylo.h": "c"
     }
 }
