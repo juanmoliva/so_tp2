@@ -12,5 +12,11 @@ void philosopher(int i);
 void take_forks(int i);
 void put_forks(int i);
 void test(int i);
+int init_phylo();
+void think(int i);
+void eat(int i);
+int get_state_phylosopher(int i);
+int add_phylo();
+int remove_phylo();
 
 #endif

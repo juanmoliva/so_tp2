@@ -234,7 +234,7 @@ int free(void *addr) {
 void print_memstate() {
     uint64_t var = syscall(MEMORY_STATE_ID,0,0,0);
     uint64_t var2= syscall(MEMORY_STATE_ID,1,0,0);
-    printf("Memoria total administrada: %d \n Memoria libre disponible: %d \n",var,var2);
+    printf("Memoria total administrada: %d \nMemoria libre disponible: %d \n",var,var2);
 }
 
 int new_process(void *rip, const char *name, uint64_t param) {
@@ -428,4 +428,24 @@ void *getParam( int pid ){
 
 int get_pid() {
     return syscall(GET_PID,0,0,0);
+}
+
+
+//PHYLOS!!!
+
+#define MODIFY_PHYLO_TABLE 30
+#define GET_PHYLO_STATE 31
+#define ADD_PHYLO 1
+#define REMOVE_PHYLO 0
+
+void add_philosopher(){
+    return syscall(MODIFY_PHYLO_TABLE,ADD_PHYLO,0,0);
+}
+
+void remove_philosopher(){
+    return syscall(MODIFY_PHYLO_TABLE,REMOVE_PHYLO,0,0);
+}
+
+int get_phylo_state(int i){
+    return syscall(GET_PHYLO_STATE,i,0,0);
 }

@@ -12,6 +12,7 @@
 #include <strings.h>
 #include <pipes.h>
 #include <synchro.h>
+#include <phylo.h>
 
 void read_handler(uint64_t fd, char * buff, uint64_t count) {
     // File descriptor doesn't matter
@@ -218,6 +219,21 @@ void loop_handler(){
     every_n_seconds_procecess(mypid);
 }
 
+int phylo_handler(int flag){
+    //Si es un "1" -> add , si es "0" -> remove
+    if(flag){
+        return add_phylo();
+    }
+    else{
+        return remove_phylo();
+    }
+    return 0;
+}
+
+int phylo_state_handler(int id_phylo){
+    //Esto tiene que devolver el estado , THINKING 0, HUNGRY 1, EATING 2
+    return get_state_phylosopher(id_phylo);
+}
 //Done & Tested:
 
 // Done:

@@ -39,6 +39,8 @@ static uint64_t syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_27 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_28 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_30 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_31 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 
 
@@ -51,7 +53,7 @@ uint64_t (* syscalls[]) (uint64_t rdi, uint64_t rsi, uint64_t rdx) = {syscall_00
 																	syscall_16, syscall_17, syscall_18, syscall_19,
 																	syscall_20, syscall_21, syscall_22, syscall_23,
 																	syscall_24, syscall_25, syscall_26, syscall_27,
-																	syscall_28, syscall_29};
+																	syscall_28, syscall_29, syscall_30,syscall_31};
 
 // Dispatcher for software interrupts
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -267,5 +269,25 @@ uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	return 0;
 	
 }
+
+uint64_t syscall_30 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* recibe en RDI -> flag (add o remove phylosopher)
+	*/
+
+	return phylo_handler(rdi);;
+	
+}
+
+uint64_t syscall_31 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* recibe en RDI -> ID del Phylo 
+	*/
+
+	return phylo_state_handler(rdi);
+}
 //ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 
 //PORQUE ESTO ES LO QUE LLAMA EL CHABON!!!!!!! DPS DE ESTO SE PASA A SYSCALLS.c Y DPS A PROCESS.C
+
+
+phylo:Implementa el problemadelosfilósofoscomensales.​
+DEBERÁ permitir cambiar la cantidad de filósofos en runtime con las teclas “a”(add 1) y “r”(remove1).
+También ​DEBERÁ ​mostrar el estado de la mesa de forma sencilla pero legible.

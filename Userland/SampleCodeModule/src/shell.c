@@ -260,7 +260,7 @@ void pipe_cmd(){
 }
 void filter_cmd(void *input){
     if (input == NULL) {
-        output(" \n invalid input for filter. \n");
+        output(" \ninvalid input for filter. \n");
         return;
     }
     char dest[500];
@@ -274,7 +274,7 @@ void filter_cmd(void *input){
 
 void wc_cmd(void *input){
     if (input == NULL) {
-        output(" \n invalid input for wc. \n");
+        output(" \ninvalid input for wc. \n");
         return;
     }
     printf("%d lines. \n", wc_input((char *)input));
@@ -319,6 +319,49 @@ void loop_cmd(){
 }
 
 void phylo_cmd(){
+    char *states = {"thinking", "hungry", "eating"};
+    int curr_phylos = 1;
+    add_philosopher();
+    printf_std("\nel problema de los filosofos comensales. \n");
+    printf_std("\ncurrent philosophers: %d \n", curr_phylos);
+
+   
+    printf_std("Select 'p' to see table's state, 'a' to add a philosopher, 'r' to remove a philosopher and 'q' to quit program. ");
+    char input[50];
+    while (1) {
+            gets(input, 50);
+        if ( input[0] == 'a' ) {
+            add_philosopher();
+            curr_phylos++;
+            printf_std("\ncurrent philosophers: %d \n", curr_phylos);
+        }else if (input[0] == 'p')
+        {
+            int id;
+            int state;
+            for (int i = 0; i < curr_phylos; i++)
+            {
+                //get state
+                state = get_phylo_state(i);
+                //print
+                printf_std("Phylo - %d = %s",i,states[state]);
+            }
+            
+            //Phylo-1 = Thinking
+            //Phylo-2 = Eating
+            //Phylo-3 = Eating
+            //Phylo-4 = Thinking
+            //Phylo-5 = Hungry
+
+        }else if (input[0] == 'r')
+        {
+            remove_philosopher();
+            curr_phylos--;
+            printf_std("\ncurrent philosophers: %d \n", curr_phylos);
+        }else if (input[0]=='q')
+        {
+            return;
+        }
+    }
 }
 void mem_cmd(){
   print_memstate();
