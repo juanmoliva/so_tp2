@@ -397,10 +397,10 @@ void nice (int pid, int priority){
      syscall(NICE, pid, priority, 0);
 }
 
-void loop_function(){
+/* void loop_function(){
      syscall(LOOP,0,0,0);
      puts("ANISMANLOMATARON");
-}
+} */
 
 
 int output(char *str) {

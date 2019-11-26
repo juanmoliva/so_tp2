@@ -78,6 +78,7 @@ void initShell() {
 
             // de donde debo leer el input?
             int h=0;
+            printf("la accion es %d ", action);
             if ( command_params_num[command] != 0 ) {
                 if ( curr_in ) {
                     // el input se recibirá de un pipe.
@@ -117,6 +118,7 @@ void initShell() {
                 // el comando lo ejecutamos en un nuevo proceso, el output lo escribimos en la consola.
                 puts("proceso ejecutandose en background! \n");
                 int new_pid = new_process(&new_process_wrapper, command_strings[command],(uint64_t) command);
+                printf("nuevo pid: %d \n", new_pid);
                 setParam(new_pid,(uint64_t) param);
                 end_of_input = 1;
             } else if (action == PIPE ) {
@@ -186,6 +188,7 @@ void help_cmd() {
     puts("\nblock <pid> ~ bloquea un proceso");
     puts("\nkill <pid> ~ mata un proceso");
     puts("\nnice <pid> ~ cambia la prioridad de un proceso");
+    puts("\nloop <X> ~ Crea un proceso que imprime su pid cada X segundos");
     puts("\npara utilizar un pipe utilice el simbolo '#' ");
 
 
@@ -314,8 +317,16 @@ void nice_cmd(void *pid){
     return;
 }
 
-void loop_cmd(){
-    loop_function();
+void loop_cmd(void *secs){
+    int loop_secs = atoi(secs,1);
+    int my_pid = get_pid();
+    
+    while(1) {
+        printf("Im process with pid %d \n", my_pid);
+        sleep(loop_secs*1000);
+    }
+    
+
 }
 
 void phylo_cmd(){
