@@ -286,8 +286,3 @@ uint64_t syscall_31 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 }
 //ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 
 //PORQUE ESTO ES LO QUE LLAMA EL CHABON!!!!!!! DPS DE ESTO SE PASA A SYSCALLS.c Y DPS A PROCESS.C
-
-
-phylo:Implementa el problemadelosfilósofoscomensales.​
-DEBERÁ permitir cambiar la cantidad de filósofos en runtime con las teclas “a”(add 1) y “r”(remove1).
-También ​DEBERÁ ​mostrar el estado de la mesa de forma sencilla pero legible.
