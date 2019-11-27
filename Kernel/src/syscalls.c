@@ -76,12 +76,12 @@ void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb) {
     // ncNewline();
 }
 
-void *memory_handler(uint8_t flag,int num){
+uint64_t memory_handler(uint8_t flag,uint64_t num){
     if(flag) {
-        return (void *)free_block((void *)num); // casteo solo por claridad, no tiene uso.
+        return (uint64_t)free_block((void *)num); // casteo solo por claridad, no tiene uso.
     }
     else {
-        return allocate_blocks(num);
+        return (uint64_t) allocate_blocks(num);
     }
 }
 
@@ -158,8 +158,8 @@ int init_sem_handler(int identifier, int count) {
     return sem_init(identifier, count);
 }
 
-int open_sem_handler(int identifier) {
-    return (int) sem_open(identifier);
+uint64_t open_sem_handler(int identifier) {
+    return (uint64_t) sem_open(identifier);
 }
 
 int close_sem_handler(int identifier) {
@@ -194,7 +194,22 @@ int read_pipe_handler(char *identifier, char *buff) {
 }
 
 int block_process_handler(int pid){
-    return update_process_state(pid,'b');
+    int res;
+    if ( is_blocked(pid) ) {
+        res = update_process_state(pid,'a');
+        if (res) {
+            return -1;
+        }
+        else return 0;
+    }
+    else {
+        res = update_process_state(pid,'b');
+        if (res) {
+            return -1;
+        }
+        else return 1;
+    }
+    return 0;
 }
 
 int nice_handler(int pid, int priority){

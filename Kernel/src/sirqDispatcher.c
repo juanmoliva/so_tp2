@@ -5,7 +5,7 @@
 
 #include <console.h>
 
-#define SYSCALL_COUNT	29
+#define SYSCALL_COUNT	31
 
 // Software handlers functions
 static uint64_t syscall_00 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
@@ -193,7 +193,7 @@ uint64_t syscall_20 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	*/
 
 	//return open_sem_handler((char *) rdi);
-	return (uint64_t) open_sem_handler((int) rdi);
+	return open_sem_handler((int) rdi);
 }
 
 uint64_t syscall_21 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -248,7 +248,8 @@ uint64_t syscall_26 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 }
 
 uint64_t syscall_27 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-	/* write rsi content on pipe with rdi identifier.
+	/* recibe en rdi proceso a bloquear/ desbloquear.
+		returns 1 if process was blocked, 0 if it was unblocked, -1 on error.
 	*/
 
 	return (uint64_t) block_process_handler(rdi);

@@ -250,10 +250,25 @@ uint64_t set_process_state(int pid, char state) {
 }
 
 uint64_t list_processes() {
+    char *states[] = {"ready","running","blocked"};
+    int state = 0;
     process_t **temp = (process_t **) syscall(LIST_PROCESSES, 0 ,0, 0);
+    
     for(int i = 0 ; i < 50 ; i++ ) {
+        switch (temp[i]->status)
+        {
+        case 'a':
+            state = 0;
+            break;
+        case 'b':
+            state = 2;
+            break;
+        default:
+            state = 1;
+            break;
+        }
        if( temp[i] != NULL) {
-           printf("Process called %s with pid %d is running and has priority %d \n",temp[i]->name, i, temp[i]->ppriority);
+           printf("Process called %s with pid %d is %s and has priority %d \n",temp[i]->name, i,states[state], temp[i]->ppriority);
        }
     }
     output("End. \n");
@@ -353,10 +368,13 @@ uint64_t kill_process(int pid) {
 void block_process (int pid){ 
     int result =  syscall (BLOCK_PROCESS, pid, 0, 0);
     if(result == -1){
-        output("No existe funcion con tal pid");
+        output("\nNo existe funcion con tal pid\n");
     } 
-    else{
-        output("Bloqueado con exito");
+    else if (result){
+        output("\nBloqueado con exito\n");
+    }
+    else {
+        output("\nDesbloqueado con exito \n");
     }
 }
 
@@ -439,11 +457,11 @@ int get_pid() {
 #define REMOVE_PHYLO 0
 
 void add_philosopher(){
-    return syscall(MODIFY_PHYLO_TABLE,ADD_PHYLO,0,0);
+    syscall(MODIFY_PHYLO_TABLE,ADD_PHYLO,0,0);
 }
 
 void remove_philosopher(){
-    return syscall(MODIFY_PHYLO_TABLE,REMOVE_PHYLO,0,0);
+    syscall(MODIFY_PHYLO_TABLE,REMOVE_PHYLO,0,0);
 }
 
 int get_phylo_state(int i){

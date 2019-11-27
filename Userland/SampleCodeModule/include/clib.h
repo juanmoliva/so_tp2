@@ -103,7 +103,9 @@ void setOutput(int pid,int new_pipe);
 int get_pid();
 void setParam( int pid , uint64_t param );
 void *getParam( int pid );
-
+void add_philosopher();
+void remove_philosopher();
+int get_phylo_state(int i);
 extern uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 #endif /* CLIB_H_ */

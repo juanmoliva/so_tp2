@@ -13,7 +13,7 @@ uint64_t rtc_handler(uint8_t register);
 void sleep_handler(uint64_t millis);
 void beep_handler(uint16_t frequency, uint64_t time);
 void pixel_handler(uint64_t x, uint64_t y, uint64_t rgb);
-void *memory_handler(uint8_t flag,int num);
+uint64_t memory_handler(uint8_t flag,uint64_t num);
 uint64_t memory_state_handler(uint8_t free);
 uint64_t create_process_handler(void *rip, char *name, uint64_t param);
 uint64_t update_process_priority_handler(int pid, int priority);
@@ -24,7 +24,7 @@ int get_pid_handler();
 int kill_process_handler(int pid);
 sem_t *list_sem_handler();
 int init_sem_handler(int id, int count);
-int open_sem_handler(int id);
+uint64_t open_sem_handler(int id);
 int close_sem_handler(int id);
 int sem_wait_handler(int id);
 int sem_post_handler(int id);
@@ -34,6 +34,8 @@ int read_pipe_handler(char *identifieri, char *buff);
 int block_process_handler(int pid);
 int nice_handler(int pid, int priority);
 void loop_handler();
+int phylo_handler(int flag);
+int phylo_state_handler(int id_phylo);
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 #endif

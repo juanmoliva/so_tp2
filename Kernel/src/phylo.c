@@ -1,31 +1,37 @@
 #include <phylo.h>
 #include <synchro.h>
 #include <process.h>
+#include <syscalls.h>
 
 #define ID_PHYLO 300 
 
 int state[N]; /* array to keep track of everyone’s state */
 int pids[N];
-sem_t *mutex;  /* mutual exclusion for critical regions */
-sem_t *s[N]; /* one semaphore per philosopher */
+int mutex;  /* mutual exclusion for critical regions */
+int s[N]; /* one semaphore per philosopher */
 int curr_phylos = 0;
 
 int init_phylo() {
-    int res = sem_init(ID_PHYLO + 1, 1);
+    mutex = ID_PHYLO + 1;
+    int res = sem_init(mutex, 1);
+    
     if (res != 0) {
         return 1; //error
     }
-    mutex = sem_open(ID_PHYLO + 1);
+    
+    void *res_open = sem_open(mutex);
+    if(res_open == NULL) {
+        return 2;
+    }
 
+    return 0;
 }
 
 void philosopher(int i) {   /* i: philosopher number, from 0 to N−1 */
-    
-    int res = sem_init(ID_PHYLO + i*ID_PHYLO, 0);
-    if (res != 0) {
-        return 1; //error
-    }
-    s[i] = sem_open(ID_PHYLO + i*ID_PHYLO);
+    s[i] = ID_PHYLO + i*ID_PHYLO;
+
+    sem_init(s[i], 0);
+    sem_open(s[i]);
 
     while (1) {             /* repeat forever */
         think(i);            /* philosopher is thinking */
@@ -35,15 +41,15 @@ void philosopher(int i) {   /* i: philosopher number, from 0 to N−1 */
     } 
 }
 
-void think(i){
+void think(int i){
     
     state[i] = THINKING;
-    sleep_handler(2000);
+    sleep_handler(500);
 }
 
-void eat(i){
+void eat(int i){
     state[i] = EATING;
-    sleep_handler(2000);
+    sleep_handler(500);
 }
 
 void take_forks(int i)      /* i: philosopher number, from 0 to N−1 */

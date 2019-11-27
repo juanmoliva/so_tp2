@@ -419,10 +419,19 @@ int kill_process(int pid) {
 
     free_block(process_list[pid]->bp);
     free_block(process_list[pid]);
+    process_list[pid] = NULL;
 
     return 0;
 }
 
+int is_blocked(int pid) {
+    if ( process_list[pid]->status == 'b' ){
+        return 1;
+    }
+
+    return 0;
+
+}
 
 /*char **list_processes() {
     char* processes[MAX_PID];

@@ -13,6 +13,8 @@ void (* command_functions[]) (void *param) = {help_cmd, date_cmd, time_cmd, slee
 static int command_params_num[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0};
 
 void new_process_wrapper( int command );
+int shell_reader( char *input, char *dest, int *offset );
+void shell_loop();
 
 
 #define MAX_LENGTH  100
@@ -25,6 +27,10 @@ static void newLine(){
 }
 void initShell() {
     initScreen();
+    shell_loop();
+}
+
+void shell_loop() {
     int command = NO_CMD;
     char input[MAX_LENGTH];
     char shaved_input[MAX_LENGTH];
@@ -46,7 +52,9 @@ void initShell() {
             action = UNDEFINED;
             command_input[0] = 0;
             param = (void *)0x0;
-            int j = 0;
+
+            int res = shell_reader(input, shaved_input, &char_read);
+            /* int j = 0;
             for (; char_read < MAX_LENGTH-1; char_read++) {
                 if ( input[char_read] != ' ' && input[char_read] != '\n' && input[char_read] != '\0' ) {
                     shaved_input[j++] = input[char_read];
@@ -59,7 +67,15 @@ void initShell() {
                     break;
                 }
             }
-            shaved_input[j] = 0;
+            shaved_input[j] = 0; */
+            if (res < 0) {
+                printf_std("error: error inesperado. \n");
+                break;
+            }
+            if ( !res ) {
+                //corre normal
+                action = END_OF_LINE;
+            }
             
             // averiguamos el comando
             command = getCommand(shaved_input); 
@@ -67,30 +83,70 @@ void initShell() {
                 puts("error: lectura de comando erroneo. \n");
                 break;
             }
-
+            
             // definimos la accion.
+            if( action != END_OF_LINE ) {
+                char_read++;
+                int res_2 = shell_reader(input, command_input, &char_read);
+                if( res_2 == -1 ) {
+                    printf_std("error: error inesperado. \n");
+                    break;
+                }
+                else if (!res_2) {
+                    if ( command_input[0] == '#' ) { action = PIPE; char_read++; end_of_input=0;}
+                    else if ( command_input[0] == '&') {action = BACKGROUND; char_read++;}
+                    else { 
+                        action = PARAMS;
+                        param = malloc(50);
+                        memcpy(param, command_input, 50);
+                    }
+                }
+                else {
+                    // space after input.
+                    if(input[char_read + 1] == '#') {
+                        param = malloc(50);
+                        memcpy(param, command_input, 50);
+                        action = PIPE; char_read = char_read +2; end_of_input=0;
+                    }
+                    else if(input[char_read + 1] == '&') {
+                        param = malloc(50);
+                        memcpy(param, command_input, 50);
+                        action = BACKGROUND; char_read = char_read +2;
+                    }
+                    else {
+                        printf_std("error: lectura/cantidad de parametros erronea. \n");
+                        break;
+                    }
+                }
+                
+            }
+
+            /* // definimos la accion.
             if( action != END_OF_LINE ) {
                 char_read++;
                 if ( input[char_read] == '#' ) { action = PIPE; char_read++; end_of_input=0;}
                 else if ( input[char_read] == '&') {action = BACKGROUND; char_read++;}
                 else { action = PARAMS; }
-            }
+            } */
 
             // de donde debo leer el input?
             int h=0;
-            printf("la accion es %d ", action);
             if ( command_params_num[command] != 0 ) {
                 if ( curr_in ) {
                     // el input se recibirá de un pipe.
+                    sleep(3000);
                     puts("reading from pipe \n");
                     read_pipe(curr_in, command_input);
                     puts("read from pipe: ");
                     puts(command_input);
                     puts("\n");
                     for(;h<MAX_INPUT_LENGTH && command_input[h] != 0; h++){}
-                } else if( action == PARAMS ) {
-                        // leo parametro.
-                        
+                } else if( !param ) {
+                        puts("A command did not receive required input. \n");
+                        command = NO_CMD;
+                        break;
+                }        // leo parametro.
+                        /* 
                         while(input[char_read] != '\n' && input[char_read] != ' ' && input[char_read] != '\0') {
                             command_input[h++] = input[char_read];
                             char_read++;
@@ -102,18 +158,17 @@ void initShell() {
                     puts("A command did not receive required input. \n");
                     command = NO_CMD;
                     break;
-                }
+                } */
             } else {
                 curr_in = 0;
             }
             
-            // llegados a este punto, si el comando requiere parametros/input los tengo en command_input
             // ahora solo queda ejecutar el comando, e indicarle el pipe/output donde tiene que escribir.
             
-            if (command_input[0] != 0) {
+            /* if (command_input[0] != 0) {
                 param = malloc(h);
                 memcpy(param, command_input, h);
-            }
+            } */
             if ( action == BACKGROUND ) {
                 // el comando lo ejecutamos en un nuevo proceso, el output lo escribimos en la consola.
                 puts("proceso ejecutandose en background! \n");
@@ -145,6 +200,29 @@ void initShell() {
         }
     }
 	exit();
+}
+
+int shell_reader( char *input, char *dest, int *offset ) {
+    // reads input, returns 1 if there is a space after text read.
+    // returns 0 if after text there is a \n or  \0.
+
+    int j = 0;
+    for (; (*offset) < MAX_LENGTH-1; (*offset)++) {
+        if ( input[*offset] != ' ' && input[*offset] != '\n' && input[*offset] != '\0' ) {
+            dest[j++] = input[*offset];
+        }
+        else if (input[*offset] == '\n' || input[*offset] == '\0' ) {
+            // not space
+            dest[j] = 0;
+            return 0;
+        } else {
+            // space
+            dest[j] = 0;
+            return 1;
+        }
+    }
+    // error
+    return -1;
 }
 
 
@@ -258,9 +336,35 @@ void ps_cmd(){
 void sem_cmd(){ 
     list_sem();
 }
-void pipe_cmd(){
+
+/* void pipe_cmd(){
     list_pipes();
+} */
+
+void pipe_cmd() {
+    // creamos un nuevo pipe, un proceso nuevo que escriba en ese pipe.
+    int new_pipe = create_pipe();
+    puts(" will execute ps # filter");
+    puts("a pipe was created: ");
+    printf("%d\n", new_pipe);
+    int new_pid = new_process(&new_process_wrapper, command_strings[10], (uint64_t)10);
+    setOutput(new_pid,new_pipe);
+    setParam(new_pid,(uint64_t) 0x0);
+
+
+    sleep(3000);
+
+    char input[500];
+    puts("reading from pipe \n");
+    read_pipe(new_pipe, input);
+    puts("read from pipe: ");
+    puts(input);
+    puts("\n");
+
+    filter_cmd((void *)input);
 }
+
+
 void filter_cmd(void *input){
     if (input == NULL) {
         output(" \ninvalid input for filter. \n");
@@ -330,33 +434,39 @@ void loop_cmd(void *secs){
 }
 
 void phylo_cmd(){
-    char *states = {"thinking", "hungry", "eating"};
+    char *states[] = {"thinking", "hungry", "eating"};
     int curr_phylos = 1;
     add_philosopher();
     printf_std("\nel problema de los filosofos comensales. \n");
     printf_std("\ncurrent philosophers: %d \n", curr_phylos);
 
    
-    printf_std("Select 'p' to see table's state, 'a' to add a philosopher, 'r' to remove a philosopher and 'q' to quit program. ");
+    printf_std("Select:\n\t 's' to see table's state.\n");
+    printf_std("\t'a' to add a philosopher.\n");
+    printf_std("\t'r' to remove a philosopher.\n");
+    printf_std("\t'p' to run ps command (see currently running processes).\n");
+    printf_std("\t'q' to quit program.\n");
     char input[50];
     while (1) {
+            printf_std("\n---- ");
             gets(input, 50);
+            printf_std("\n\n");
         if ( input[0] == 'a' ) {
             add_philosopher();
             curr_phylos++;
-            printf_std("\ncurrent philosophers: %d \n", curr_phylos);
-        }else if (input[0] == 'p')
+            printf_std("current philosophers: %d \n", curr_phylos);
+        }else if (input[0] == 's')
         {
-            int id;
             int state;
             for (int i = 0; i < curr_phylos; i++)
             {
                 //get state
                 state = get_phylo_state(i);
                 //print
-                printf_std("Phylo - %d = %s",i,states[state]);
+                printf_std("\nPhylo - %d =",i);
+                printf_std(" %s",states[state]);
             }
-            
+            printf_std("\n");
             //Phylo-1 = Thinking
             //Phylo-2 = Eating
             //Phylo-3 = Eating
@@ -367,9 +477,15 @@ void phylo_cmd(){
         {
             remove_philosopher();
             curr_phylos--;
-            printf_std("\ncurrent philosophers: %d \n", curr_phylos);
+            printf_std("current philosophers: %d \n", curr_phylos);
+        }else if (input[0] == 'p')
+        {
+            ps_cmd();
         }else if (input[0]=='q')
         {
+            for (int i = 0; i<curr_phylos; i++) {
+                remove_philosopher();
+            }
             return;
         }
     }
@@ -384,4 +500,5 @@ void new_process_wrapper( int command ) {
     command_functions[command](param);
 
     kill_process(pid);
+    shell_loop();
 }

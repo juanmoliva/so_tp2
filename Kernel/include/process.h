@@ -40,6 +40,7 @@ process_t* get_Pnode(int pid);
 int addProcess_scheduler(int pid);
 int removeProcess_scheduler( int pid );
 int get_free_pid();
+int is_blocked(int pid);
 
 
 #endif
