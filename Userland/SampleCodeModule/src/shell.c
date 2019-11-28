@@ -11,6 +11,7 @@ void (* command_functions[]) (void *param) = {help_cmd, date_cmd, time_cmd, slee
                                       ,sem_cmd, pipe_cmd, filter_cmd, wc_cmd, cat_cmd, block_cmd, kill_cmd, loop_cmd, nice_cmd, phylo_cmd, mem_cmd};
 
 static int command_params_num[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0};
+int shell_died = 0;
 
 void new_process_wrapper( int command );
 int shell_reader( char *input, char *dest, int *offset );
@@ -93,8 +94,8 @@ void shell_loop() {
                     break;
                 }
                 else if (!res_2) {
-                    if ( command_input[0] == '#' ) { action = PIPE; char_read++; end_of_input=0;}
-                    else if ( command_input[0] == '&') {action = BACKGROUND; char_read++;}
+                    /* if ( command_input[0] == '#' ) { action = PIPE; char_read++; end_of_input=0;}
+                    else */ if ( command_input[0] == '&') {action = BACKGROUND; char_read++;}
                     else { 
                         action = PARAMS;
                         param = malloc(50);
@@ -103,7 +104,10 @@ void shell_loop() {
                 }
                 else {
                     // space after input.
-                    if(input[char_read + 1] == '#') {
+                    if ( command_input[0] == '#' ) { action = PIPE; end_of_input=0;}
+                    else if ( command_input[0] == '&') {action = BACKGROUND; char_read++;}
+                    else if(input[char_read + 1] == '#') {
+                        // pipe with param
                         param = malloc(50);
                         memcpy(param, command_input, 50);
                         action = PIPE; char_read = char_read +2; end_of_input=0;
@@ -134,13 +138,17 @@ void shell_loop() {
             if ( command_params_num[command] != 0 ) {
                 if ( curr_in ) {
                     // el input se recibirá de un pipe.
-                    sleep(3000);
-                    puts("reading from pipe \n");
+                    sleep(1000);
+                    //puts("reading from pipe \n");
                     read_pipe(curr_in, command_input);
-                    puts("read from pipe: ");
-                    puts(command_input);
-                    puts("\n");
+                    //puts("read from pipe: ");
+                    //puts(command_input);
+                    //puts("\n");
                     for(;h<MAX_INPUT_LENGTH && command_input[h] != 0; h++){}
+                    memcpy(param,(void *)command_input, h);
+                    end_of_input = 1;
+                    action = END_OF_LINE;
+                    //puts((char *)param);
                 } else if( !param ) {
                         puts("A command did not receive required input. \n");
                         command = NO_CMD;
@@ -172,6 +180,7 @@ void shell_loop() {
             if ( action == BACKGROUND ) {
                 // el comando lo ejecutamos en un nuevo proceso, el output lo escribimos en la consola.
                 puts("proceso ejecutandose en background! \n");
+                shell_died = 1;
                 int new_pid = new_process(&new_process_wrapper, command_strings[command],(uint64_t) command);
                 printf("nuevo pid: %d \n", new_pid);
                 setParam(new_pid,(uint64_t) param);
@@ -337,11 +346,11 @@ void sem_cmd(){
     list_sem();
 }
 
-/* void pipe_cmd(){
+void pipe_cmd(){
     list_pipes();
-} */
+}
 
-void pipe_cmd() {
+/* void pipe_cmd() {
     // creamos un nuevo pipe, un proceso nuevo que escriba en ese pipe.
     int new_pipe = create_pipe();
     puts(" will execute ps # filter");
@@ -362,19 +371,20 @@ void pipe_cmd() {
     puts("\n");
 
     filter_cmd((void *)input);
-}
+} */
 
 
-void filter_cmd(void *input){
-    if (input == NULL) {
+void filter_cmd(void *param){
+    char *input = (char *) param;
+    if (input[0] == '\0') {
         output(" \ninvalid input for filter. \n");
         return;
     }
     char dest[500];
     puts("input received: \n");
-    puts((char *)input);
+    puts(input);
     puts("\n");
-    filter_input( (char *)input, dest );
+    filter_input( input, dest );
     puts("output from filter: \n");
     output(dest);
 }
@@ -501,4 +511,9 @@ void new_process_wrapper( int command ) {
 
     kill_process(pid);
     shell_loop();
+
+    if (shell_died) {
+        shell_died = 0;
+        shell_loop();
+    }
 }
