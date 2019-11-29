@@ -231,6 +231,7 @@ void help_cmd() {
     puts("\nkill <pid> ~ mata un proceso");
     puts("\nnice <pid> ~ cambia la prioridad de un proceso");
     puts("\nloop <X> ~ Crea un proceso que imprime su pid cada X segundos");
+    puts("\nphylo ~ programa de los filosofos");
     puts("\npara utilizar un pipe utilice el simbolo '#' ");
     puts("\npara ejecutar un comando en background escriba un espacio seguido de '&' ");
     putchar('\n');
@@ -248,6 +249,9 @@ void time_cmd() {
     output("\nSon las  ");
 	output(getTime(time));
 }
+
+void sem_cmd() {}
+
 void sleep_cmd() {
     char car;
     do{
@@ -385,8 +389,7 @@ void phylo_cmd(){
     printf_std("Select:\n\t 's' to see table's state.\n");
     printf_std("\t'a' to add a philosopher.\n");
     printf_std("\t'r' to remove a philosopher.\n");
-    printf_std("\t'p' to run ps command (see currently running processes).\n");
-    printf_std("\t'x' to run sem command (see curren semaphores being used).\n");
+    printf_std("\t'ps' to run ps command (see currently running processes).\n");
     printf_std("\t'q' to quit program.\n");
     char input[50];
     while (1) {

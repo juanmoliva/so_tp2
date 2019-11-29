@@ -231,7 +231,6 @@ int nice_handler(int pid, int priority){
 
 void loop_handler(){
     int mypid = get_pid();
-    every_n_seconds_procecess(mypid);
 }
 
 int phylo_handler(int flag){

@@ -32,9 +32,6 @@ int create_process(int priority, void *rip, char* name, int rdi);
 int get_pid(); // del running
 int kill_process(int pid);
 process_t ** process_list_returner();
-void check_sleepers();
-int every_n_seconds_procecess(int pid);
-int get_free_bed();
 int get_Process_Pid(process_t* process);
 process_t* get_Pnode(int pid);
 int addProcess_scheduler(int pid);

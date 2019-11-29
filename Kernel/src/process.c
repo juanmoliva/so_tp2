@@ -148,7 +148,6 @@ void *schedule(void *prev_rsp) {
         return prev_rsp;
     }
     // CASO 3
-    check_sleepers();
     if ( prior_counter >= 0 ) {
         prior_counter--;
         return prev_rsp;
