@@ -286,26 +286,12 @@ uint64_t list_processes() {
 uint64_t list_sem() {
     sem_t *temp = (sem_t *) syscall(LIST_SEM, 0 ,0, 0);
     if(temp == NULL){
-        puts("No Sem Yet.");
+        output("\nNo Sem Yet.");
         return 0;
     }
-    p_blocked_t *blocked_p = temp->blocked_processes;
-    int flag = 0;
     while(temp != NULL){
-        flag = 0;
-        puts("Sem ");
-            printf("%d", temp->identifier);
-            puts(" contains this blocked processes:");
-            puts("/n");
-        while(blocked_p != NULL){
-            flag = 1;
-            puts("Process ");
-            printf("%d", blocked_p->pid);
-            puts("/n");
-        }
-        if(!flag){
-            puts("None");
-        }
+        output("Sem ");
+        printf("%d", temp->identifier);    
         temp=temp->next;
     }
     return 0;
@@ -317,31 +303,9 @@ uint64_t list_pipes() {
         puts("No Pipes Yet.");
         return 0;
     }
-    sem_t *temp = aux->global_sem;
-    p_blocked_t *blocked_p = temp->blocked_processes;
-    int flag = 0;
     while(aux != NULL){
-        puts("Pipe ");
-        printf("%d", aux->identifier);
-        puts("contains this sem:");
-        puts("/n");
-        while(temp != NULL){
-            flag = 0;
-            puts("Sem ");
-            printf("%d", temp->identifier);
-            puts(" contains this blocked processes:");
-            puts("/n");
-            while(blocked_p != NULL){
-                flag = 1;
-                puts("Process ");
-                printf("%d", blocked_p->pid);
-                puts("/n");
-            }
-            if(!flag){
-                puts("None");
-            }
-            temp=temp->next;
-        }
+        output("Pipe ");
+        printf("%s \n", aux->identifier);
         aux=aux->next;
     }
     return 0;
@@ -389,7 +353,7 @@ void block_process (int pid){
 void filter_input (char *input, char *dest) {
     int counter = 0,j=0;
     while ( *input != 0 && counter <= 2000) {
-        if(*input != 'a' && *input != 'e' && *input != 'i' && *input != 'o' && *input != 'u') {
+        if(*input != 'a' && *input != 'e' && *input != 'i' && *input != 'o' && *input != 'u' && *input != 'A' && *input != 'E' && *input != 'I' && *input != 'O' && *input != 'U') {
             *(dest+j) = *(input);
             j++;
         }
@@ -403,17 +367,23 @@ void filter_input (char *input, char *dest) {
 int wc_input(char *input) {
     int counter = 0;
     int lines = 0;
+    int empty_line = 1;
     if (*input == 0 ) {
         return 0;
     }
     else {
         lines++;
     }
-    while ( *input != 0 && counter <= 2000) {
-        if(*input == '\n') {
+    while ( *input != 0 && counter <= 3000) {
+        if(*input == '\n' && !empty_line ) {
            lines++;
+           empty_line = 1;
         }
-        
+        if(empty_line) {
+            empty_line = 0;
+        }
+        input++;
+        counter++;
     }
 
     return lines;
@@ -422,11 +392,6 @@ int wc_input(char *input) {
 void nice (int pid, int priority){
      syscall(NICE, pid, priority, 0);
 }
-
-/* void loop_function(){
-     syscall(LOOP,0,0,0);
-     puts("ANISMANLOMATARON");
-} */
 
 
 int output(char *str) {

@@ -1,6 +1,17 @@
 doit: 
 	cd Toolchain; make all; cd ../; make all
-all:  bootloader kernel userland image
+
+all: bootloader kernel userland image
+
+free-list: free-list bootloader kernel userland image
+
+buddy: buddy-prepare bootloader kernel userland image
+
+free-list:
+	./prepare.sh
+
+buddy-prepare:
+	./prepare.sh buddy
 
 bootloader:
 	cd Bootloader; make all

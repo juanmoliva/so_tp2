@@ -433,57 +433,7 @@ int is_blocked(int pid) {
 
 }
 
-/*char **list_processes() {
-    char* processes[MAX_PID];
-    process_t * temp = process_list_first->pid;
-    int i = 0;
-    if ( temp == NULL ) {
-        processes[i] = NULL;
-        return processes;
-    }
-    while(temp != NULL){
-        temp = temp->next;
-    }
-
-} */
 
 process_t **process_list_returner() {
     return process_list;
-}
-
-////////// MAGIA DEL LOOP PARA QUE FUNQUE BIEN
-
-int get_free_bed(){
-    for(int i=0 ; i < MAX_SLEEPING ; i++ ){
-        if (sleeping_procecess[i]==NULL){
-            return i;
-        }
-    }
-    return -1;
-}
-// funcion que interrumpe al scheduler cada n segundos y le hace runnear un programa
-int every_n_seconds_procecess(int pid){// funcion que interrumpe al scheduler cada n segundos y le hace runnear un programa
-    sleeping_t * sleeper = (sleeping_t *) malloc( sizeof(sleeping_t) );
-    sleeper->tt = (int)(5/0.55); // guardo los tt necesarios hasta que corra capaz esta mal la cuenta 
-    sleeper->ppid=pid; // guardo el pid del proceso 
-    int free = get_free_bed();// busco lugar libre en el vector
-    if (free == -1){ // error por si no hay lugar
-        return -1;
-    }
-    sleeping_procecess[free]= sleeper; // guardo el proceso ahi 
-    update_process_state(pid, 'b'); // cambio el proceso a bloqueado 
-    return 0;
-}
-// funcion que corre siempre el scheduler para bajar los tt 
-void check_sleepers(){
-     for(int i=0 ; i < MAX_SLEEPING ; i++ ){
-        if (sleeping_procecess[i] != NULL){ // si hay un proceso durmiendo en ese lugar
-            if(sleeping_procecess[i]->tt == 1){ // si el tt es igual a 1 ya la puedo despertar porque lo bajaria a 0 
-                update_process_state(sleeping_procecess[i]->ppid, 'a'); // cambio el proceso a 'a'
-                sleeping_procecess[i]=NULL; // saco al proceso de la lista ya que esta despierto
-                return;
-            }
-            sleeping_procecess[i]->tt--; // sino hay que despertarlo le bajo un tt 
-        }
-     }
 }
