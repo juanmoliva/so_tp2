@@ -5,7 +5,7 @@
 
 #include <console.h>
 
-#define SYSCALL_COUNT	31
+#define SYSCALL_COUNT	32
 
 // Software handlers functions
 static uint64_t syscall_00 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
@@ -41,6 +41,7 @@ static uint64_t syscall_28 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_29 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_30 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 static uint64_t syscall_31 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
+static uint64_t syscall_32 (uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 
 
@@ -53,7 +54,7 @@ uint64_t (* syscalls[]) (uint64_t rdi, uint64_t rsi, uint64_t rdx) = {syscall_00
 																	syscall_16, syscall_17, syscall_18, syscall_19,
 																	syscall_20, syscall_21, syscall_22, syscall_23,
 																	syscall_24, syscall_25, syscall_26, syscall_27,
-																	syscall_28, syscall_29, syscall_30,syscall_31};
+																	syscall_28, syscall_29, syscall_30,syscall_31, syscall_32};
 
 // Dispatcher for software interrupts
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
@@ -285,5 +286,10 @@ uint64_t syscall_31 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 
 	return phylo_state_handler(rdi);
 }
-//ACA AGREGAR TODO LO Q QUIERAS Q TENGA CONTACTO CON EL USERLAND!!!!!! 
-//PORQUE ESTO ES LO QUE LLAMA EL CHABON!!!!!!! DPS DE ESTO SE PASA A SYSCALLS.c Y DPS A PROCESS.C
+
+uint64_t syscall_32 (uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+	/* retorna el tipo de MM en uso 
+	*/
+
+	return get_mm_handler();
+}

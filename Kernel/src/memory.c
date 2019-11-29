@@ -4,20 +4,29 @@
 #include <stdint.h>
 #define BLOCKSIZE 0x40
 #define NULL 0
+#define FREE_LIST 0
 
 static void * start_memsegment = (void*)0x10000000;
-static void * end_memsegment = (void*)0x15000000;
+static void * end_memsegment = (void*)0x14000000;
 
-
+typedef struct node_mem {
+    unsigned char free;
+    unsigned long size;
+    void *startAddr;
+    struct node_mem * next;
+} node_mem_t;
 
 node_mem_t *first_mem_node = (node_mem_t *)0x10000000;
 
 /*
-    2^20 bytes de memoria.
-    bloques o paginas de 64 bytes.
+    2^26 bytes de memoria.
+    | En Free list --> Bloques de 64 bytes.
 */
 
-/* tenemos una cierta cantidad de memoria libre para administrar en bytes:
+
+/* Free list - First fit policy:
+
+    tenemos una cierta cantidad de memoria libre para administrar en bytes:
     - separamos la memoria en bloques
     - cuando llega una syscall pidiendo una cierta cantidad de bytes, nos fijamos cuantos bloques necesita,
     y devolvemos una dirección con esa cantidad de bloques libres, y guardamos en un array o algo la direccion asignada y la cantidad de bloques.
@@ -29,7 +38,7 @@ void init_mm() {
     first_mem_node->free = 1;
     first_mem_node->next = NULL;
     first_mem_node->startAddr = start_memsegment;
-    first_mem_node->blocks = (int) (end_memsegment - start_memsegment) / BLOCKSIZE;
+    first_mem_node->size = (int) (end_memsegment - start_memsegment) / BLOCKSIZE;
 }
 
 //Aca alocamos los bytes que nos pide el usuario
@@ -45,7 +54,7 @@ void *allocate_blocks(int bytes) {
 
     //itero hasta encontrar el que sirve o se me acabo la lista
     while( current != NULL ) {
-        if (current->free && current->blocks >= needed_blocks ) {
+        if (current->free && current->size >= needed_blocks ) {
             break;
         }
         else {
@@ -63,12 +72,12 @@ void *allocate_blocks(int bytes) {
         
         
         aux->next = current->next;
-        aux->blocks = current->blocks - needed_blocks;
+        aux->size = current->size - needed_blocks;
         aux->free = 1;
         aux->startAddr = current->startAddr + needed_blocks*BLOCKSIZE;
 
         current->free = 0;
-        current ->blocks = needed_blocks;
+        current->size = needed_blocks;
         current->next = aux->startAddr;
 
 
@@ -117,7 +126,7 @@ int cur_free_mem() {
     while (current != NULL)
     {
         if(current->free == 1){
-            freeBlocks += current->blocks;
+            freeBlocks += current->size;
         }
         current=current->next;
     }
@@ -129,4 +138,8 @@ int total_mem(void *address) {
     // devuelve la cantidad de memoria total que se administra.
 
     return (int) (end_memsegment - start_memsegment);
+}
+
+int get_system(){
+    return FREE_LIST;
 }

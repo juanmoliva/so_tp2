@@ -36,6 +36,7 @@ int nice_handler(int pid, int priority);
 void loop_handler();
 int phylo_handler(int flag);
 int phylo_state_handler(int id_phylo);
+int get_mm_handler();
 uint64_t handleSyscall(uint64_t sirq, uint64_t rdi, uint64_t rsi, uint64_t rdx);
 
 #endif
