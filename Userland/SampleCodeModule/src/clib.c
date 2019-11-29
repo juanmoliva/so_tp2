@@ -29,6 +29,7 @@
 #define BLOCK_PROCESS 27
 #define NICE 28
 #define LOOP 29
+#define SYSTEM_MM 32
 
 
 
@@ -234,7 +235,14 @@ int free(void *addr) {
 void print_memstate() {
     uint64_t var = syscall(MEMORY_STATE_ID,0,0,0);
     uint64_t var2= syscall(MEMORY_STATE_ID,1,0,0);
-    printf("Memoria total administrada: %d \nMemoria libre disponible: %d \n",var,var2);
+    uint64_t var3= syscall(SYSTEM_MM, 0,0,0);
+    char *mm;
+    if(var3) {
+        mm = "Buddy";
+    } else {
+        mm = "Free List";
+    }
+    printf("Using %s mm.\nMemoria total administrada: %d \nMemoria libre disponible: %d \n",mm,var,var2);
 }
 
 int new_process(void *rip, const char *name, uint64_t param) {
